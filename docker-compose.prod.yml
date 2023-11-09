@@ -4,6 +4,7 @@ services:
     image: carlossfc/soundcollect-proxy:${IMAGE_TAG}
     volumes:
       - ./certbot/conf:/etc/letsencrypt/:ro
+      - ./certbot/:/var/www/certbot
     restart: unless-stopped
     ports:
       - "80:80"
