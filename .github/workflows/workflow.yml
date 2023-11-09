@@ -81,8 +81,8 @@ jobs:
         run: docker pull $MYSQL_IMAGE
       - name: Run tests
         run: |
-          docker-compose -f docker-compose.ci.yml up -d
-          docker-compose -f docker-compose.ci.yml exec -T api php artisan test
+          docker compose -f docker-compose.ci.yml up -d
+          docker compose -f docker-compose.ci.yml exec -T api php artisan test
 
   remove-images:
     needs: [ analyze, test ]
