@@ -1,4 +1,4 @@
-FROM node:20.9.0-alpine AS base
+FROM node:14.18.0-alpine AS base
 WORKDIR /usr/src/app
 COPY ./frontend/package.* ./
 RUN npm install
