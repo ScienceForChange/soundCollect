@@ -1,0 +1,109 @@
+version: "3.8"
+services:
+  proxy:
+    image: carlossfc/soundcollect-proxy:${IMAGE_TAG}
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt/:ro
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - frontend
+      - nginx
+
+  certbot:
+    image: certbot/certbot:latest
+    volumes:
+      - ./certbot/www/:/var/www/certbot/:rw
+      - ./certbot/conf/:/etc/letsencrypt/:rw
+
+  frontend:
+    image: carlossfc/soundcollect-frontend:${IMAGE_TAG}
+    restart: unless-stopped
+
+  api:
+    image: carlossfc/soundcollect-api:${IMAGE_TAG}
+    command: sh -c "./wait-for-it.sh mysql:3306 -t 30 && ./wait-for-it.sh redis:6379 -t 30 && php-fpm"
+    restart: unless-stopped
+    volumes:
+      - ./.env:/usr/src/.env
+      - type: volume
+        source: storage
+        target: /usr/src/storage
+    depends_on:
+      - update
+      - mysql
+      - redis
+
+  scheduler:
+    image: carlossfc/soundcollect-scheduler:${IMAGE_TAG}
+    restart: unless-stopped
+    volumes:
+      - ./.env:/usr/src/.env
+      - type: volume
+        source: storage
+        target: /usr/src/storage
+    depends_on:
+      - update
+      - mysql
+      - redis
+
+  worker:
+    image: carlossfc/soundcollect-worker:${IMAGE_TAG}
+    restart: unless-stopped
+    volumes:
+      - ./.env:/usr/src/.env
+      - type: volume
+        source: storage
+        target: /usr/src/storage
+    depends_on:
+      - update
+      - mysql
+      - redis
+
+  nginx:
+    image: carlossfc/soundcollect-nginx:${IMAGE_TAG}
+    restart: unless-stopped
+    depends_on:
+      - api
+
+  mysql:
+    image: carlossfc/soundcollect-mysql:${IMAGE_TAG}
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        source: mysqldata
+        target: /var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+
+  redis:
+    image: redis:7.0.11-alpine
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        source: redisdata
+        target: /data
+
+  update:
+    image: carlossfc/soundcollect-api:${IMAGE_TAG}
+    command: sh -c "./wait-for-it.sh mysql:3306 -t 30 && ./update.sh"
+    restart: "no"
+    volumes:
+      - ./.env:/usr/src/.env
+    depends_on:
+      - mysql
+
+  watchtower:
+    image: containrrr/watchtower:1.5.3
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - REPO_USER=${DOCKERHUB_USERNAME}
+      - REPO_PASS=${DOCKERHUB_PASSWORD}
+
+volumes:
+  storage:
+  mysqldata:
+  redisdata:

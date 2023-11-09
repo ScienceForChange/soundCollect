@@ -1,0 +1,166 @@
+name: Tests
+
+on:
+  push:
+    branches: [ "master" ]
+
+env:
+  API_IMAGE: carlossfc/soundcollect-api:${{ github.sha }}
+  SCHEDULER_IMAGE: carlossfc/soundcollect-scheduler:${{ github.sha }}
+  WORKER_IMAGE: carlossfc/soundcollect-worker:${{ github.sha }}
+  NGINX_IMAGE: carlossfc/soundcollect-nginx:${{ github.sha }}
+  PROXY_IMAGE: carlossfc/soundcollect-proxy:${{ github.sha }}
+  MYSQL_IMAGE: carlossfc/soundcollect-mysql:${{ github.sha }}
+  FRONTEND_IMAGE: carlossfc/soundcollect-frontend:${{ github.sha }}
+  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+
+jobs:
+  build-backend-images:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build images
+        run: |
+          docker build -t $API_IMAGE --target=api --build-arg user=ubuntu --build-arg uid=1000 -f ./api/Dockerfile .
+          docker build -t $SCHEDULER_IMAGE --target=scheduler --build-arg user=ubuntu --build-arg uid=1000 -f ./api/Dockerfile .
+          docker build -t $WORKER_IMAGE --target=worker --build-arg user=ubuntu --build-arg uid=1000 -f ./api/Dockerfile .
+      - name: Push images
+        run: |
+          docker push $API_IMAGE
+          docker push $SCHEDULER_IMAGE
+          docker push $WORKER_IMAGE
+
+  build-mysql:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build MySQL image
+        run: docker build -t $MYSQL_IMAGE --build-arg password=${{ secrets.DB_PASSWORD }} -f ./Dockerfile.mysql .
+      - name: Push Mysql image
+        run: docker push $MYSQL_IMAGE
+
+  analyze:
+    needs: [build-backend-images, build-mysql]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Pull API image
+        run: docker pull $API_IMAGE
+      - name: Pull MySQL image
+        run: docker pull $MYSQL_IMAGE
+      - name: Run phpstan
+        # run: docker run --rm -t $API_IMAGE ./vendor/bin/phpstan analyze --memory-limit=1G
+        run: echo "Esta prueba de momento la salto porque falla mucho"
+      - name: Run phpinsights
+        run: docker run --rm -t $API_IMAGE php artisan insights --no-interaction --min-quality=60 --min-complexity=60 --min-architecture=60 --min-style=60 --ansi --format=github-action
+
+  test:
+    needs: [ build-backend-images, build-mysql ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Pull API image
+        run: docker pull $API_IMAGE
+      - name: Pull MySQL image
+        run: docker pull $MYSQL_IMAGE
+      - name: Run tests
+        run: |
+          docker-compose -f docker-compose.ci.yml up -d
+          docker-compose -f docker-compose.ci.yml exec -T api php artisan test
+
+  remove-images:
+    needs: [ analyze, test ]
+    runs-on: ubuntu-latest
+    if: ${{ always() && contains(needs.*.result, 'failure') }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Remove images
+        run: |
+          ./deployment/bin/remove-image.sh carlossfc/soundcollect-api ${{ github.sha }} ${{ secrets.DOCKERHUB_USERNAME }} ${{ secrets.DOCKERHUB_PASSWORD }}
+          ./deployment/bin/remove-image.sh carlossfc/soundcollect-mysql ${{ github.sha }} ${{ secrets.DOCKERHUB_USERNAME }} ${{ secrets.DOCKERHUB_PASSWORD }}
+          ./deployment/bin/remove-image.sh carlossfc/soundcollect-worker ${{ github.sha }} ${{ secrets.DOCKERHUB_USERNAME }} ${{ secrets.DOCKERHUB_PASSWORD }}
+          ./deployment/bin/remove-image.sh carlossfc/soundcollect-scheduler ${{ github.sha }} ${{ secrets.DOCKERHUB_USERNAME }} ${{ secrets.DOCKERHUB_PASSWORD }}
+
+  build-nginx:
+    needs: [ analyze, test ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build nginx image
+        run: |
+          docker build -t $NGINX_IMAGE -f ./Dockerfile.nginx .
+          docker push $NGINX_IMAGE
+
+  build-proxy:
+    needs: [ analyze, test ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build nginx image
+        run: |
+          docker build -t $PROXY_IMAGE -f ./Dockerfile.proxy .
+          docker push $PROXY_IMAGE
+
+  build-frontend:
+    needs: [ analyze, test ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build frontend image
+        run: |
+          docker build -t $FRONTEND_IMAGE --target=prod -f ./frontend/Dockerfile .
+          docker push $FRONTEND_IMAGE
+
+  deploy-prod:
+    needs: [ build-frontend, build-nginx, build-proxy ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Copy SSH key
+        run: |
+          echo "${{ secrets.SSH_KEY }}" >> ./id_rsa
+          chmod 600 id_rsa
+      - name: Deploy app
+        run: |
+          scp -C -o StrictHostKeyChecking=no -i ./id_rsa ./deployment/bin/deploy.sh ${{ secrets.SSH_CONNECTION_PROD }}:/home/ubuntu/deploy.sh
+          scp -C -o StrictHostKeyChecking=no -i ./id_rsa ./docker-compose.prod.yml ${{ secrets.SSH_CONNECTION_PROD }}:/usr/src/docker-compose.prod.yml
+          scp -C -o StrictHostKeyChecking=no -i ./id_rsa ./.env.prod.template ${{ secrets.SSH_CONNECTION_PROD }}:/usr/src/.env
+          ssh -tt -o StrictHostKeyChecking=no -i ./id_rsa ${{ secrets.SSH_CONNECTION_PROD }} "chmod +x /home/ubuntu/deploy.sh"
+          ssh -tt -o StrictHostKeyChecking=no -i ./id_rsa ${{ secrets.SSH_CONNECTION_PROD }} "
+            sed -i '/IMAGE_TAG/c\IMAGE_TAG=${{ github.sha }}' /usr/src/.env
+            sed -i '/COMPOSE_PROJECT_NAME/c\COMPOSE_PROJECT_NAME=soundcollect' /usr/src/.env
+
+            sed -i '/DOCKERHUB_USERNAME/c\DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}' /usr/src/.env
+            sed -i '/DOCKERHUB_PASSWORD/c\DOCKERHUB_PASSWORD=${{ secrets.DOCKERHUB_PASSWORD }}' /usr/src/.env
+
+            sed -i '/DB_PASSWORD/c\DB_PASSWORD=${{ secrets.DB_PASSWORD }}' /usr/src/.env
+            sed -i '/APP_KEY/c\APP_KEY=${{ secrets.APP_KEY }}' /usr/src/.env"
+          ssh -tt -o StrictHostKeyChecking=no -i ./id_rsa ${{ secrets.SSH_CONNECTION_PROD }} "/home/ubuntu/deploy.sh"

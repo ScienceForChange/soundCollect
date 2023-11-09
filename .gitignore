@@ -1,0 +1,6 @@
+.DS_Store
+.idea
+redisdata
+mysqldata
+.env
+.vscode/
