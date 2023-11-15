@@ -1,1 +1,1 @@
-CREATE DATABASE posts;
+CREATE DATABASE soundcollect;
