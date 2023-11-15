@@ -8,7 +8,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./deployment/config/proxy.conf:/etc/nginx/nginx.conf
+      - ./deployment/config/proxy-dev.conf:/etc/nginx/nginx.conf
     depends_on:
       - frontend
       - nginx
