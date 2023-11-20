@@ -31,7 +31,7 @@ services:
         user: carlos-sfc
         uid: 1000
       context: .
-      dockerfile: ./api/Dockerfile
+      dockerfile: ./api/Dockerfile-dev
       target: api
     command: sh -c "./wait-for-it.sh mysql:3306 -t 30 && ./wait-for-it.sh redis:6379 -t 30 && php-fpm"
     restart: unless-stopped
@@ -46,6 +46,7 @@ services:
       - ./api/composer.lock:/usr/src/composer.lock
       - ./.env:/usr/src/.env
       - ./deployment/config/php-fpm/php-dev.ini:/usr/local/etc/php/conf.d/php.ini
+      - ./deployment/config/php-fpm/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
     depends_on:
       - update
       - mysql
@@ -57,7 +58,7 @@ services:
           user: carlos-sfc
           uid: 1000
       context: .
-      dockerfile: ./api/Dockerfile
+      dockerfile: ./api/Dockerfile-dev
       target: scheduler
     restart: unless-stopped
     volumes:
@@ -81,7 +82,7 @@ services:
         user: carlos-sfc
         uid: 1000
       context: .
-      dockerfile: ./api/Dockerfile
+      dockerfile: ./api/Dockerfile-dev
       target: worker
     restart: unless-stopped
     volumes:
@@ -138,7 +139,7 @@ services:
         user: carlos-sfc
         uid: 1000
       context: .
-      dockerfile: ./api/Dockerfile
+      dockerfile: ./api/Dockerfile-dev
     command: sh -c "./wait-for-it.sh mysql:3306 -t 30 && ./update.sh"
     restart: no
     volumes:
