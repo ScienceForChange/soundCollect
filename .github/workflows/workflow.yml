@@ -161,6 +161,9 @@ jobs:
             sed -i '/DOCKERHUB_USERNAME/c\DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}' /usr/src/.env
             sed -i '/DOCKERHUB_PASSWORD/c\DOCKERHUB_PASSWORD=${{ secrets.DOCKERHUB_PASSWORD }}' /usr/src/.env
 
+            sed -i '/MAIL_USERNAME/c\MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}' /usr/src/.env
+            sed -i '/MAIL_PASSWORD/c\MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}' /usr/src/.env
+
             sed -i '/DB_PASSWORD/c\DB_PASSWORD=${{ secrets.DB_PASSWORD }}' /usr/src/.env
             sed -i '/APP_KEY/c\APP_KEY=${{ secrets.APP_KEY }}' /usr/src/.env"
           ssh -tt -o StrictHostKeyChecking=no -i ./id_rsa ${{ secrets.SSH_CONNECTION_PROD }} "/home/ubuntu/deploy.sh"
