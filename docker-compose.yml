@@ -43,6 +43,7 @@ services:
       - ./api/storage:/usr/src/storage
       - ./api/tests:/usr/src/tests
       - ./api/composer.json:/usr/src/composer.json
+      - /usr/src/vendor
       - ./api/composer.lock:/usr/src/composer.lock
       - ./.env:/usr/src/.env
       - ./deployment/config/php-fpm/php-dev.ini:/usr/local/etc/php/conf.d/php.ini
