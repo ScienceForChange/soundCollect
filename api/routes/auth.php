@@ -30,7 +30,7 @@ Route::post('/reset-password', [NewPasswordController::class, 'store'])
 
 // URL - Al acceder a ella con el id de usuario y un hash válido se valida el usuario y se redirige
 Route::get('/verify-email/{id}/{hash}', VerifyEmailController::class)
-                ->middleware(['auth', 'signed', 'throttle:6,1'])
+                ->middleware(['signed', 'throttle:6,1'])
                 ->name('verification.verify');
 
 // ENDPOINT - Para el re-envio de verificacion de email
