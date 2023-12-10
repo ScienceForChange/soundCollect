@@ -7,6 +7,8 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Auth\Access\AuthorizationException;
 
 class VerifyEmailController extends Controller
 {
@@ -15,6 +17,21 @@ class VerifyEmailController extends Controller
      */
     public function __invoke(EmailVerificationRequest $request): RedirectResponse
     {
+        if(!Auth::check()) {
+            $user = \App\Models\User::find($request->route('id'));
+
+            if (!hash_equals((string) $request->route('hash'), sha1($user->getEmailForVerification()))) {
+                throw new AuthorizationException;
+            }
+
+            if ($user->markEmailAsVerified())
+                event(new Verified($user));
+
+            return redirect()->intended(
+                config('app.frontend_url').RouteServiceProvider::HOME
+            );
+        }
+
         if ($request->user()->hasVerifiedEmail()) {
             return redirect()->intended(
                 config('app.frontend_url').RouteServiceProvider::HOME.'?verified=1'
