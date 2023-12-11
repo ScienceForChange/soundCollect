@@ -14,11 +14,14 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid');
-            $table->string('name');
+            $table->integer('profile_id');
+            $table->string('profile_type')->default('App\\Models\\ProfileCitizen');
+            $table->string('avatar_id')->default(1);
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->rememberToken();
+            $table->rememberToken()->nullable();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->softDeletes()->nullabe();
             $table->timestamps();
         });
     }

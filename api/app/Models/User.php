@@ -8,10 +8,18 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Traits\HasUuid;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable, HasUuid;
+
+    /**
+     * The relationships that should always be loaded.
+     *
+     * @var array
+     */
+    protected $with = ['profile'];
 
     /**
      * The attributes that are mass assignable.
@@ -19,9 +27,10 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'username',
         'email',
         'password',
+        'avatar_id',
     ];
 
     /**
@@ -48,4 +57,13 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return 'uuid';
     }
+
+    /**
+     * Get the parent userable model (citizen profile, client profile, etc).
+     */
+    public function profile(): MorphTo
+    {
+        return $this->morphTo(__FUNCTION__, 'profile_type', 'profile_id');
+    }
+
 }

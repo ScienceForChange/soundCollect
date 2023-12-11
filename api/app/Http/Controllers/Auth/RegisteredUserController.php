@@ -3,13 +3,15 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Models\{User, ProfileCitizen};
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use Illuminate\Validation\Rules\Enum;
+use Illuminate\Support\Facades\DB;
 
 class RegisteredUserController extends Controller
 {
@@ -21,21 +23,31 @@ class RegisteredUserController extends Controller
     public function store(Request $request): Response
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'name' => ['required', 'string', 'min:3','max:100'],
+            'birth_year' => ['required', 'string'], // Se puede poner una lógica de mínimo de edad, máximo, etc
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class.',email'],
+            'gender' => ['required', new Enum(\App\Enums\Citizen\Gender::class)],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        DB::transaction(function () use ($request) {
+            $citizen = ProfileCitizen::create([
+                'name' => $request->name,
+                'gender' => $request->gender,
+                'birth_year' => $request->birth_year,
+            ]);
 
-        event(new Registered($user));
+            $user = $citizen->user()->create([
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
 
-        Auth::login($user);
+            event(new Registered($user));
 
+            Auth::login($user);
+        });
+
+        // TODO: Aquí quizá sería bueno devolver el usuario registrado, aunque no verificado pero sí el usuario.
         return response()->noContent();
     }
 }
