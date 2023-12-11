@@ -6,6 +6,8 @@ test('new users can register', function () {
         'email' => 'test@example.com',
         'password' => 'password',
         'password_confirmation' => 'password',
+        'birth_year' => '31-12-1993',
+        'gender' => 'hombre'
     ]);
 
     $this->assertAuthenticated();

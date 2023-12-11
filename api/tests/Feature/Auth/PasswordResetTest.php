@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\ProfileCitizen;
 use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Notification;
@@ -7,7 +8,7 @@ use Illuminate\Support\Facades\Notification;
 test('reset password link can be requested', function () {
     Notification::fake();
 
-    $user = User::factory()->create();
+    $user = User::factory()->for(ProfileCitizen::factory(), 'profile')->create();
 
     $this->post('/forgot-password', ['email' => $user->email]);
 
@@ -17,7 +18,7 @@ test('reset password link can be requested', function () {
 test('password can be reset with valid token', function () {
     Notification::fake();
 
-    $user = User::factory()->create();
+    $user = User::factory()->for(ProfileCitizen::factory(), 'profile')->create();
 
     $this->post('/forgot-password', ['email' => $user->email]);
 

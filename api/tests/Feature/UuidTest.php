@@ -1,10 +1,10 @@
 <?php
 
-use App\Models\User;
+use App\Models\{ User, ProfileCitizen };
 
 
 test('get user by uuid', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->for(ProfileCitizen::factory(), 'profile')->create();
 
     $response = $this->get("api/users/$user->uuid");
 
@@ -13,7 +13,7 @@ test('get user by uuid', function () {
 
 
 test('Not get user by ID', function() {
-    $user = User::factory()->create();
+    $user = User::factory()->for(ProfileCitizen::factory(), 'profile')->create();
 
     $response = $this->get("api/users/$user->id");
 
