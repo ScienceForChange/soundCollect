@@ -16,4 +16,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum'])->get('/user', [App\Http\Controllers\Api\V1\AuthUserController::class, 'show'])->name('auth.show');
 
-Route::apiResource('users', App\Http\Controllers\Api\V1\UserController::class);
+Route::middleware(['auth:sanctum'])->get('/users/{uuid}', [App\Http\Controllers\Api\V1\UserController::class, 'show'])->name('users.show');
+
+Route::fallback(function () {
+    return response()->json([
+        'message' => 'URL Not Found'
+    ], 404);
+});

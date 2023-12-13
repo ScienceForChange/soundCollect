@@ -65,4 +65,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->morphTo(__FUNCTION__, 'profile_type', 'profile_id');
     }
 
+    /**
+     * Get user´s profile type
+     */
+    public function getProfileTypeAttribute(): string
+    {
+        return $this->profile->getMorphClass();
+    }
 }

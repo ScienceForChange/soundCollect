@@ -30,9 +30,11 @@ class UserController extends Controller
      */
     public function show(Request $request)
     {
-        return new UserResource(User::where('uuid', )->firstOr(function () {
-            abort(404);
-        }));
+        $user = User::where('uuid', $request->uuid)->firstOr(function () {
+            abort(404, 'User not found');
+        });
+
+        return new UserResource($user);
     }
 
     /**

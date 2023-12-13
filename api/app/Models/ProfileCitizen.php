@@ -19,6 +19,15 @@ class ProfileCitizen extends Model
     ];
 
     /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'birth_year' => 'date',
+    ];
+
+    /**
      * Get the user's profile.
      */
     public function user(): MorphOne

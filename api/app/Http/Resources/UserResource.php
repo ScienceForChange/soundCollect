@@ -15,19 +15,17 @@ class UserResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'type' => 'user',
+            'type' => $this->getProfileTypeAttribute(),
             'uuid' => $this->uuid,
             'attributes' => [
-                'email' => $this->email,
-                'avatar' => $this->avatar,
-                'created_at' => $this->created_at,
-                'updated_at' => $this->updated_at,
+                'email' => $this->when($request->user()?->uuid === $this->uuid, $this->email),
+                'avatar' => $this->avatar_id,
                 'profile' => new ProfileCitizenResource($this->profile),
                 'created_at' => $this->created_at->format('Y-m-d H:i:s'),
                 'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
             ],
             'links' => [
-                'self' => route('users.show', ['user' => $this->uuid]),
+                'self' => route('users.show', ['uuid' => $this->uuid]),
             ],
             'relationships' => [
                 //

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid');
             $table->integer('profile_id');
-            $table->string('profile_type')->default('App\\Models\\ProfileCitizen');
+            $table->string('profile_type')->default('citizen');
             $table->string('avatar_id')->default(1);
             $table->string('email')->unique();
             $table->string('password');
