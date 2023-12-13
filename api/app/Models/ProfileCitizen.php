@@ -14,6 +14,7 @@ class ProfileCitizen extends Model
         'name',
         'gender',
         'birth_year',
+        'status_sentence',
         'deleted_because'
     ];
 
