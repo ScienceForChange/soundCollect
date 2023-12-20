@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\{User, ProfileCitizen};
+use App\Traits\ApiResponses;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -12,15 +13,18 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\Rules\Enum;
 use Illuminate\Support\Facades\DB;
+use App\Http\Resources\UserResource;
+use Illuminate\Http\JsonResponse;
 
 class RegisteredUserController extends Controller
 {
+    use ApiResponses;
     /**
      * Handle an incoming registration request.
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): Response
+    public function store(Request $request): JsonResponse
     {
         $request->validate([
             'name' => ['required', 'string', 'min:3','max:100'],
@@ -40,6 +44,7 @@ class RegisteredUserController extends Controller
             $user = $citizen->user()->create([
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
+                'avatar_id' => 1,
             ]);
 
             event(new Registered($user));
@@ -47,7 +52,9 @@ class RegisteredUserController extends Controller
             Auth::login($user);
         });
 
-        // TODO: Aquí quizá sería bueno devolver el usuario registrado, aunque no verificado pero sí el usuario.
-        return response()->noContent();
+        return $this->success(
+            new UserResource($request->user()),
+            Response::HTTP_CREATED
+        );
     }
 }

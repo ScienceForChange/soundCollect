@@ -18,6 +18,8 @@ Route::middleware(['auth:sanctum'])->get('/user', [App\Http\Controllers\Api\V1\A
 
 Route::middleware(['auth:sanctum'])->get('/users/{uuid}', [App\Http\Controllers\Api\V1\UserController::class, 'show'])->name('users.show');
 
+Route::middleware(['auth:sanctum', 'verified'])->get('/verified', [App\Http\Controllers\Api\V1\AuthUserController::class, 'verified'])->name('users.verified');
+
 Route::fallback(function () {
     return response()->json([
         'message' => 'URL Not Found'
