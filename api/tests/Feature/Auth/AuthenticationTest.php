@@ -18,7 +18,7 @@ test('users can authenticate using the login screen', function () {
         ]);
 
         $this->assertAuthenticated();
-        $response->assertNoContent();
+        $response->assertCreated();
     });
 });
 
