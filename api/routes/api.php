@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,14 +15,30 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware(['auth:sanctum'])->get('/user', [App\Http\Controllers\Api\V1\AuthUserController::class, 'show'])->name('auth.show');
+Route::post('register', \App\Http\Controllers\Auth\RegisteredUserController::class)
+                ->middleware('guest')
+                ->name('register');
 
-Route::middleware(['auth:sanctum'])->get('/users/{uuid}', [App\Http\Controllers\Api\V1\UserController::class, 'show'])->name('users.show');
+Route::post('/login', \App\Http\Controllers\Auth\LoginController::class)
+                ->middleware('guest')
+                ->name('login');
 
-Route::middleware(['auth:sanctum', 'verified'])->get('/verified', [App\Http\Controllers\Api\V1\AuthUserController::class, 'verified'])->name('users.verified');
+Route::post('/verify-email', \App\Http\Controllers\Auth\VerifyEmailController::class)
+                ->middleware(['auth:sanctum', 'throttle:6,1', 'otp'])
+                ->name('verification.verify');
 
-Route::fallback(function () {
-    return response()->json([
-        'message' => 'URL Not Found'
-    ], 404);
+Route::post('/reset-password', \App\Http\Controllers\Auth\NewPasswordController::class)
+                                ->middleware(['guest'])
+                                ->name('password.store');
+
+Route::middleware(['auth:sanctum'])
+   ->group(function() {
+        Route::get('/user', function (Request $request) {
+            return $request->user();
+        });
+        Route::post('/logout', \App\Http\Controllers\Auth\LogoutController::class);
+});
+
+Route::controller(\App\Http\Controllers\Auth\AuthOtpController::class)->group(function(){
+    Route::post('/otp/generate', 'generate')->middleware('throttle:3,2')->name('otp.generate');
 });

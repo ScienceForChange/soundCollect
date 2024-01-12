@@ -72,4 +72,14 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->profile->getMorphClass();
     }
+
+    public function hasValidOtp()
+    {
+        return $this->hasOne(VerificationCode::class)->where('is_used', false)->where('expire_at', '>', now());
+    }
+
+    public function sendEmailOtpNotification(VerificationCode $otp): void
+    {
+        $this->notify(new \App\Notifications\Otp($otp));
+    }
 }

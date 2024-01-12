@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
+use App\Models\User;
 
 class NewPasswordController extends Controller
 {
@@ -19,13 +20,20 @@ class NewPasswordController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): JsonResponse
+    public function __invoke(Request $request): JsonResponse
     {
         $request->validate([
             'token' => ['required'],
             'email' => ['required', 'email'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'otp' => ['required', 'string'],
         ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if((!$user) || $user->hasValidOtp()->first()->otp !== $request->otp) {
+            return response()->json(['message' => 'OTP is invalid']);
+        }
 
         // Here we will attempt to reset the user's password. If it is successful we
         // will update the password on an actual user model and persist it to the

@@ -24,7 +24,7 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): JsonResponse
+    public function __invoke(Request $request): JsonResponse
     {
         $request->validate([
             'name' => ['required', 'string', 'min:3','max:100'],
@@ -32,28 +32,29 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class.',email'],
             'gender' => ['required', new Enum(\App\Enums\Citizen\Gender::class)],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'device_name' => ['required', 'string', 'max:255'],
         ]);
 
-        DB::transaction(function () use ($request) {
-            $citizen = ProfileCitizen::create([
-                'name' => $request->name,
-                'gender' => $request->gender,
-                'birth_year' => $request->birth_year,
-            ]);
+        $citizen = ProfileCitizen::create([
+            'name' => $request->name,
+            'gender' => $request->gender,
+            'birth_year' => $request->birth_year,
+        ]);
 
-            $user = $citizen->user()->create([
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-                'avatar_id' => 1,
-            ]);
+        $user = $citizen->user()->create([
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'avatar_id' => 1,
+        ]);
 
-            event(new Registered($user));
+        event(new Registered($user));
 
-            Auth::login($user);
-        });
+        // Auth::login($user);
 
         return $this->success(
-            new UserResource($request->user()),
+            $user
+                ->createToken(request('device_name'))
+                ->plainTextToken,
             Response::HTTP_CREATED
         );
     }
