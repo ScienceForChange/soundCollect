@@ -2,13 +2,17 @@
 
 namespace App\Models;
 
+use App\Notifications\NewPassword;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Traits\HasUuid;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Builder;
+use Carbon\Carbon;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -73,13 +77,23 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->profile->getMorphClass();
     }
 
-    public function hasValidOtp()
+    public function activeOtp()
     {
-        return $this->hasOne(VerificationCode::class)->where('is_used', false)->where('expire_at', '>', now());
+        return $this->otp()->where('expire_at', '>', Carbon::now())->where('is_used', false)->first();
+    }
+
+    public function otp(): HasMany
+    {
+        return $this->hasMany(VerificationCode::class);
     }
 
     public function sendEmailOtpNotification(VerificationCode $otp): void
     {
         $this->notify(new \App\Notifications\Otp($otp));
+    }
+
+    public function sendNewPasswordNotification($newPassword): void
+    {
+        $this->notify(new NewPassword($newPassword));
     }
 }

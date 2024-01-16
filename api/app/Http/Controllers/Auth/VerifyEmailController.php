@@ -15,17 +15,18 @@ class VerifyEmailController extends Controller
      */
     public function __invoke(EmailVerificationRequest $request): JSONResponse
     {
-        if($request->user()->hasValidOtp()->first()?->otp !== $request->otp) {
+        // Take the active OTP of current user
+        $activeOtp = $request->user()->activeOtp();
+
+        if( $activeOtp && $activeOtp->otp !== $request->otp ){
             return response()->json(['message' => 'OTP is invalid']);
         }
 
-        if ($request->user()->hasVerifiedEmail()) {
+        if( $request->user()->hasVerifiedEmail() ){
             return response()->json(['message' => 'Already verified']);
         }
 
-        if ($request->user()->markEmailAsVerified()) {
-            event(new Verified($request->user()));
-        }
+        $request->user()->markEmailAsVerified();
 
         return response()->json(['message' => 'Successfully verified']);
     }

@@ -9,7 +9,7 @@ class VerificationCode extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'otp', 'expire_at', 'is_used'];
+    protected $fillable = ['user_id', 'otp', 'type', 'expire_at', 'is_used'];
 
     public function user()
     {

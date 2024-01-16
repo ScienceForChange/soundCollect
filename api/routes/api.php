@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('register', \App\Http\Controllers\Auth\RegisteredUserController::class)
+Route::post('/register', \App\Http\Controllers\Auth\RegisteredUserController::class)
                 ->middleware('guest')
                 ->name('register');
 
@@ -24,21 +24,27 @@ Route::post('/login', \App\Http\Controllers\Auth\LoginController::class)
                 ->name('login');
 
 Route::post('/verify-email', \App\Http\Controllers\Auth\VerifyEmailController::class)
-                ->middleware(['auth:sanctum', 'throttle:6,1', 'otp'])
+                ->middleware(['auth:sanctum', 'throttle:6,1'])
                 ->name('verification.verify');
 
 Route::post('/reset-password', \App\Http\Controllers\Auth\NewPasswordController::class)
                                 ->middleware(['guest'])
                                 ->name('password.store');
 
+Route::post('/logout', \App\Http\Controllers\Auth\LogoutController::class)
+                ->middleware(['auth:sanctum'])
+                ->name('logout');
+
 Route::middleware(['auth:sanctum'])
    ->group(function() {
         Route::get('/user', function (Request $request) {
             return $request->user();
         });
-        Route::post('/logout', \App\Http\Controllers\Auth\LogoutController::class);
 });
 
-Route::controller(\App\Http\Controllers\Auth\AuthOtpController::class)->group(function(){
-    Route::post('/otp/generate', 'generate')->middleware('throttle:3,2')->name('otp.generate');
+Route::controller(\App\Http\Controllers\Auth\AuthOtpController::class)
+        ->middleware(['auth:sanctum'])
+        ->group(function(){
+    Route::post('/otp/generate', 'generate')->name('otp.generate');
+    Route::post('/otp/apply', 'apply')->name('otp.verify');
 });

@@ -17,32 +17,45 @@ class AuthOtpController extends Controller
     {
         # Validate Data
         $request->validate([
-            'email' => 'required|exists:users,email'
+            'email' => 'required|exists:users,email',
+            'type' => 'required'
         ]);
 
+        $user = User::where('email', $request->email)->first();
+        $type = $request->type;
+
+        if ($request->user()->email !== $user->email) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You are not authorized to perform this action'
+            ], 403);
+        }
+
         # Generate An OTP
-        $verificationCode = $this->generateOtp($request->email);
+        $verificationCode = $this->generateOtp($user, $type);
 
+        # Send OTP to User
+        $user->sendEmailOtpNotification($verificationCode);
+
+        # Prompt OTP
         $message = "Your OTP is - ".$verificationCode->otp;
-        # Return With OTP
 
+        # Return With OTP
         return response()->json([
             'status' => 'success',
             'message' => $message
         ]);
     }
 
-    public function generateOtp($email)
+    public function generateOtp(User $user, string $type)
     {
-        $user = User::where('email', $email)->first();
-
         # User Does not Have Any Existing OTP
-        $verificationCode = VerificationCode::where('user_id', $user->id)->latest()->first();
+        $verificationCode = VerificationCode::where('user_id', $user->id)
+        ->where('expire_at', '>', Carbon::now())
+        ->where('is_used', false)
+        ->first();
 
-        $now = Carbon::now();
-
-        if($verificationCode && $now->isBefore($verificationCode->expire_at)){
-            $user->sendEmailOtpNotification($verificationCode);
+        if($verificationCode){
             return $verificationCode;
         }
 
@@ -50,11 +63,10 @@ class AuthOtpController extends Controller
         $verificationCode = VerificationCode::create([
             'user_id' => $user->id,
             'otp' => Str::upper(Str::random(4)),
+            'type' => $type,
             'is_used' => false,
             'expire_at' => Carbon::now()->addMinutes(10)
         ]);
-
-
 
         return $verificationCode;
     }

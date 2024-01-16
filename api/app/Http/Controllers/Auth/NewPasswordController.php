@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Auth\Events\PasswordReset;
+use App\Events\PasswordReset;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -23,39 +23,27 @@ class NewPasswordController extends Controller
     public function __invoke(Request $request): JsonResponse
     {
         $request->validate([
-            'token' => ['required'],
             'email' => ['required', 'email'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'otp' => ['required', 'string'],
+            'otp' => ['required'],
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $request->email)->firstOrFail();
+        // Take the active OTP of current user
+        $activeOtp = $user->activeOtp();
 
-        if((!$user) || $user->hasValidOtp()->first()->otp !== $request->otp) {
+        if( !$activeOtp || $activeOtp->otp !== $request->otp ){
             return response()->json(['message' => 'OTP is invalid']);
         }
 
-        // Here we will attempt to reset the user's password. If it is successful we
-        // will update the password on an actual user model and persist it to the
-        // database. Otherwise we will parse the error and return the response.
-        $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user) use ($request) {
-                $user->forceFill([
-                    'password' => Hash::make($request->password),
-                    'remember_token' => Str::random(60),
-                ])->save();
 
-                event(new PasswordReset($user));
-            }
-        );
+        $newPassword = Str::random(8);
 
-        if ($status != Password::PASSWORD_RESET) {
-            throw ValidationException::withMessages([
-                'email' => [__($status)],
-            ]);
-        }
+        $user->password = Hash::make($newPassword);
 
-        return response()->json(['status' => __($status)]);
+        $user->save();
+
+        event(new PasswordReset($user, $newPassword));
+
+        return response()->json(['message' => 'Password reset successfully']);
     }
 }

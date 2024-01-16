@@ -28,11 +28,10 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'min:3','max:100'],
-            'birth_year' => ['required', 'string'], // Se puede poner una lógica de mínimo de edad, máximo, etc
+            'birth_year' => ['required', 'numeric'], // Se puede poner una lógica de mínimo de edad, máximo, etc
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class.',email'],
             'gender' => ['required', new Enum(\App\Enums\Citizen\Gender::class)],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'device_name' => ['required', 'string', 'max:255'],
         ]);
 
         $citizen = ProfileCitizen::create([
@@ -47,13 +46,13 @@ class RegisteredUserController extends Controller
             'avatar_id' => 1,
         ]);
 
-        event(new Registered($user));
+        //event(new Registered($user));
 
         // Auth::login($user);
 
         return $this->success(
             $user
-                ->createToken(request('device_name'))
+                ->createToken(request('email'))
                 ->plainTextToken,
             Response::HTTP_CREATED
         );

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->bigInteger('user_id');
             $table->string('otp');
+            $table->string('type');
             $table->boolean('is_used')->default(false);
             $table->timestamp('expire_at')->nullable();
             $table->timestamps();
