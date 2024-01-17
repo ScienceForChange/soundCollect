@@ -12,9 +12,12 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use App\Models\User;
-
+use App\Traits\ApiResponses;
+use Illuminate\Http\Response;
+use Illuminate\Validation\Rules\Enum;
 class NewPasswordController extends Controller
 {
+    use ApiResponses;
     /**
      * Handle an incoming new password request.
      *
@@ -24,15 +27,19 @@ class NewPasswordController extends Controller
     {
         $request->validate([
             'email' => ['required', 'email'],
-            'otp' => ['required'],
+            'otp' => ['required',new Enum(\App\Enums\OTP\OTP::class)],
         ]);
 
-        $user = User::where('email', $request->email)->firstOrFail();
+        $user = User::where('email', $request->email)->first();
         // Take the active OTP of current user
         $activeOtp = $user->activeOtp();
 
         if( !$activeOtp || $activeOtp->otp !== $request->otp ){
-            return response()->json(['message' => 'OTP is invalid']);
+            return $this->fail(
+                [
+                    'message' => 'OTP is invalid'
+                ],
+            Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
 
@@ -42,8 +49,16 @@ class NewPasswordController extends Controller
 
         $user->save();
 
+        $activeOtp->update([
+            'is_used' => true
+        ]);
+
         event(new PasswordReset($user, $newPassword));
 
-        return response()->json(['message' => 'Password reset successfully']);
+        return $this->success(
+            [
+                'message' => 'Password reset successfully'
+            ],
+            Response::HTTP_CREATED);
     }
 }

@@ -24,7 +24,7 @@ Route::post('/login', \App\Http\Controllers\Auth\LoginController::class)
                 ->name('login');
 
 Route::post('/verify-email', \App\Http\Controllers\Auth\VerifyEmailController::class)
-                ->middleware(['auth:sanctum', 'throttle:6,1'])
+                ->middleware(['guest', 'throttle:6,1'])
                 ->name('verification.verify');
 
 Route::post('/reset-password', \App\Http\Controllers\Auth\NewPasswordController::class)
@@ -42,9 +42,20 @@ Route::middleware(['auth:sanctum'])
         });
 });
 
+Route::middleware(['auth:sanctum', 'verified'])
+   ->group(function() {
+        Route::get('/user/profile', function () {
+            return response()->json([
+                'status' => 'success',
+                'data' => [
+                    'email_verified' => 'true',
+                ],
+            ]);
+        })->name('profile');
+});
+
 Route::controller(\App\Http\Controllers\Auth\AuthOtpController::class)
-        ->middleware(['auth:sanctum'])
+        ->middleware(['guest', 'throttle:3,1'])
         ->group(function(){
     Route::post('/otp/generate', 'generate')->name('otp.generate');
-    Route::post('/otp/apply', 'apply')->name('otp.verify');
 });

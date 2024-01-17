@@ -28,7 +28,7 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'min:3','max:100'],
-            'birth_year' => ['required', 'numeric'], // Se puede poner una lógica de mínimo de edad, máximo, etc
+            'birth_year' => ['required', 'numeric'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class.',email'],
             'gender' => ['required', new Enum(\App\Enums\Citizen\Gender::class)],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
@@ -46,14 +46,11 @@ class RegisteredUserController extends Controller
             'avatar_id' => 1,
         ]);
 
-        //event(new Registered($user));
-
-        // Auth::login($user);
-
         return $this->success(
-            $user
-                ->createToken(request('email'))
-                ->plainTextToken,
+            [
+                'user'  => new UserResource($user),
+                'token' => $user->createToken(request('email'))->plainTextToken
+            ],
             Response::HTTP_CREATED
         );
     }

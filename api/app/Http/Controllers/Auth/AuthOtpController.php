@@ -8,43 +8,55 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\VerificationCode;
 use Illuminate\Support\Str;
-use App\Events\OtpGenerated;
+use App\Traits\ApiResponses;
+use Illuminate\Http\Response;
+use Illuminate\Validation\Rules\Enum;
 
 class AuthOtpController extends Controller
 {
+    use ApiResponses;
+
     // Generate OTP
     public function generate(Request $request)
     {
         # Validate Data
         $request->validate([
-            'email' => 'required|exists:users,email',
-            'type' => 'required'
+            'email' => ['required','exists:users,email', 'email'],
+            'type' => ['required',new Enum(\App\Enums\OTP\OTP::class)],
         ]);
 
         $user = User::where('email', $request->email)->first();
         $type = $request->type;
 
-        if ($request->user()->email !== $user->email) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'You are not authorized to perform this action'
-            ], 403);
-        }
+        // if ($request->user()->email !== $user->email) {
+        //     return response()->json([
+        //         'status' => 'error',
+        //         'message' => 'You are not authorized to perform this action'
+        //     ], 403);
+        // }
 
         # Generate An OTP
         $verificationCode = $this->generateOtp($user, $type);
 
         # Send OTP to User
-        $user->sendEmailOtpNotification($verificationCode);
+        try{
+            $user->sendEmailOtpNotification($verificationCode);
+        }
+        catch(\Exception $e){
+            return $this->error([
+                'message' => 'Unable to Send OTP'
+            ],
+            Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
 
         # Prompt OTP
-        $message = "Your OTP is - ".$verificationCode->otp;
+        $message = "OTP Sent Successfully ($verificationCode->otp)";
 
         # Return With OTP
-        return response()->json([
-            'status' => 'success',
-            'message' => $message
-        ]);
+        return $this->success([
+            'message' => $message,
+        ],
+        Response::HTTP_CREATED);
     }
 
     public function generateOtp(User $user, string $type)

@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
 use Illuminate\Auth\Events\Verified;
+use Illuminate\Validation\Rules\Enum;
 
 class EmailVerificationRequest extends FormRequest
 {
@@ -24,7 +25,8 @@ class EmailVerificationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'otp' => 'required',
+            'email' => ['required','exists:users,email','email'],
+            'otp' => ['required', new Enum(\App\Enums\OTP\OTP::class)],
         ];
     }
 
