@@ -64,8 +64,10 @@ Route::name('observations.')
     ->prefix('observations')
     ->group(function () {
     Route::get('/', [ObservationController::class, 'index'])->name('index');
-    Route::post('/', [ObservationController::class, 'store'])->name('store');
     Route::get('/{observation}', [ObservationController::class, 'show'])->name('show');
-    Route::put('/{observation}', [ObservationController::class, 'update'])->name('update');
-    Route::delete('/{observation}', [ObservationController::class, 'destroy'])->name('destroy');
+    Route::group(['middleware' => ['auth:sanctum']], function () {
+        Route::post('/', [ObservationController::class, 'store'])->name('store');
+        Route::put('/{observation}', [ObservationController::class, 'update'])->name('update');
+        Route::delete('/{observation}', [ObservationController::class, 'destroy'])->name('destroy');
+    });
 });
