@@ -69,5 +69,6 @@ Route::name('observations.')
         Route::post('/', [ObservationController::class, 'store'])->name('store');
         Route::put('/{observation}', [ObservationController::class, 'update'])->name('update');
         Route::delete('/{observation}', [ObservationController::class, 'destroy'])->name('destroy');
+        //test
     });
 });
