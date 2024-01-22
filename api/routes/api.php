@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\ObservationController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -58,4 +58,14 @@ Route::controller(\App\Http\Controllers\Auth\AuthOtpController::class)
         ->middleware(['guest', 'throttle:3,1'])
         ->group(function(){
     Route::post('/otp/generate', 'generate')->name('otp.generate');
+});
+
+Route::name('observations.')
+    ->prefix('observations')
+    ->group(function () {
+    Route::get('/', [ObservationController::class, 'index'])->name('index');
+    Route::post('/', [ObservationController::class, 'store'])->name('store');
+    Route::get('/{observation}', [ObservationController::class, 'show'])->name('show');
+    Route::put('/{observation}', [ObservationController::class, 'update'])->name('update');
+    Route::delete('/{observation}', [ObservationController::class, 'destroy'])->name('destroy');
 });
