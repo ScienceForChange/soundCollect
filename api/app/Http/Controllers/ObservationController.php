@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreObservationRequest;
 use App\Models\Observation;
 use Illuminate\Http\Request;
 
@@ -18,7 +19,7 @@ class ObservationController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreObservationRequest $request)
     {
         return 'store';
     }
