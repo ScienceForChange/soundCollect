@@ -16,7 +16,6 @@ use App\Http\Controllers\ObservationController;
 */
 
 Route::post('/register', \App\Http\Controllers\Auth\RegisteredUserController::class)
-                ->middleware('guest')
                 ->name('register');
 
 Route::post('/login', \App\Http\Controllers\Auth\LoginController::class)
