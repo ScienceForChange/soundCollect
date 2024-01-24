@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreRegisteredUserRequest;
 use App\Models\{User, ProfileCitizen};
 use App\Traits\ApiResponses;
 use Illuminate\Auth\Events\Registered;
@@ -24,16 +25,8 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function __invoke(Request $request): JsonResponse
+    public function __invoke(StoreRegisteredUserRequest $request): JsonResponse
     {
-        $request->validate([
-            'name' => ['required', 'string', 'min:3','max:100'],
-            'birth_year' => ['required', 'numeric'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class.',email'],
-            'gender' => ['required', new Enum(\App\Enums\Citizen\Gender::class)],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
-
         $citizen = ProfileCitizen::create([
             'name' => $request->name,
             'gender' => $request->gender,
