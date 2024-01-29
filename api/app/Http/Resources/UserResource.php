@@ -19,7 +19,7 @@ class UserResource extends JsonResource
             'uuid' => $this->uuid,
             'attributes' => [
                 'email' => $this->when($request->user()?->uuid === $this->uuid, $this->email),
-                'avatar' => $this->avatar_id,
+                'avatar_id' => $this->avatar_id,
                 'profile' => new ProfileCitizenResource($this->profile),
                 'created_at' => $this->created_at->format('Y-m-d H:i:s'),
                 'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->nullable();
             $table->string('gender')->nullable();
-            $table->string('birth_year')->nullable();
+            $table->integer('birth_year')->nullable();
             $table->text('deleted_because')->nullable();
             $table->timestamps();
         });

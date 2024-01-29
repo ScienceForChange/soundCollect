@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\Rules;
+use App\Rules\TeenAgeCare;
 
 class StoreRegisteredUserRequest extends FormRequest
 {
@@ -25,7 +26,7 @@ class StoreRegisteredUserRequest extends FormRequest
     {
         return [
             'name'          => ['required', 'string', 'min:3','max:100'],
-            'birth_year'    => ['required', 'numeric'],
+            'birth_year'    => ['required', 'numeric','between:1900,2100', new TeenAgeCare()],
             'email'         => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'gender'        => ['required', new Enum(\App\Enums\Citizen\Gender::class)],
             'password'      => ['required', 'confirmed', Rules\Password::defaults()]

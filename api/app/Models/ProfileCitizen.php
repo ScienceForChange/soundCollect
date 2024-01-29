@@ -23,8 +23,8 @@ class ProfileCitizen extends Model
      *
      * @var array<string, string>
      */
-    protected $casts = [
-        'birth_year' => 'date',
+    protected $dates = [
+        'birth_year',
     ];
 
     /**

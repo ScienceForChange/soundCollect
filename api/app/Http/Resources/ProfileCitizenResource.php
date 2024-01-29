@@ -17,8 +17,7 @@ class ProfileCitizenResource extends JsonResource
         return [
                 'name' => $this->name,
                 'gender' => $this->gender,
-                'birthYear' => $this->birth_year->format('Y-m-d'),
-                'deletedBecause' => $this->deleted_because,
+                'birthYear' => $this->birth_year,
         ];
     }
 }
