@@ -4,6 +4,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ObservationController;
+use App\Http\Resources\UserResource;
+use Illuminate\Http\JsonResponse;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -16,28 +19,33 @@ use App\Http\Controllers\ObservationController;
 */
 
 Route::post('/register', \App\Http\Controllers\Auth\RegisteredUserController::class)
+                ->middleware('guest:sanctum')
                 ->name('register');
 
 Route::post('/login', \App\Http\Controllers\Auth\LoginController::class)
-                ->middleware('guest')
+                ->middleware('guest:sanctum')
                 ->name('login');
 
 Route::post('/verify-email', \App\Http\Controllers\Auth\VerifyEmailController::class)
-                ->middleware(['guest', 'throttle:6,1'])
+                ->middleware(['guest:sanctum','throttle:6,1'])
                 ->name('verification.verify');
 
 Route::post('/reset-password', \App\Http\Controllers\Auth\NewPasswordController::class)
-                                ->middleware(['guest'])
-                                ->name('password.store');
+                ->middleware(['guest:sanctum'])
+                ->name('password.store');
 
 Route::post('/logout', \App\Http\Controllers\Auth\LogoutController::class)
                 ->middleware(['auth:sanctum'])
                 ->name('logout');
 
+//TODO: crear un controlador de usuarios loggeados
 Route::middleware(['auth:sanctum'])
    ->group(function() {
         Route::get('/user', function (Request $request) {
-            return $request->user();
+            return new JsonResponse([
+                'status' => 'success',
+                'data' => UserResource::make($request->user()),
+            ], 200);
         });
 });
 
