@@ -14,10 +14,6 @@ class StoreObservationRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
-        if(! $this->user()){
-            die("User not found"); // TODO: change to exception
-        }
-
         $this->merge([
             'user_id' => $this->user()->id,
         ]);
@@ -43,11 +39,12 @@ class StoreObservationRequest extends FormRequest
             'audio_param_2' => [''],
             'audio_param_3' => [''],
             'audio_param_4' => [''],
-            'images' => [File::image()
-                ->types(['jpg', 'png'])
-                ->min(1024)
-                ->max(12 * 1024)
-                ->dimensions(Rule::dimensions()->maxWidth(1000)->maxHeight(500)),
+            'images.*' => [
+                File::image()
+                    ->types(['jpg', 'png'])
+                    ->min(128)
+                    ->max(120 * 1024)
+                    ->dimensions(Rule::dimensions()->maxWidth(1000)->maxHeight(500)),
             ],
             'sound_type' => [''],
             'sound_source' => [''],

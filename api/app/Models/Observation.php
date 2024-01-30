@@ -23,6 +23,10 @@ class Observation extends Model
         'user_id',
     ];
 
+    protected $casts = [
+        'images' => 'array',
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

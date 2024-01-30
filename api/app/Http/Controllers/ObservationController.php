@@ -2,18 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DeleteObservationRequest;
 use App\Http\Requests\StoreObservationRequest;
 use App\Models\Observation;
 use Illuminate\Http\Request;
+use App\Http\Resources\ObservationResource;
+use App\Traits\ApiResponses;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Arr;
+
 
 class ObservationController extends Controller
 {
+    use ApiResponses;
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return 'index';
+        return $this->success(
+            ObservationResource::collection(Observation::all()),
+            Response::HTTP_OK
+        );
     }
 
     /**
@@ -21,7 +32,22 @@ class ObservationController extends Controller
      */
     public function store(StoreObservationRequest $request)
     {
-        return 'store';
+        $validated = $request->validated();
+
+        if ($request->hasFile('images')) {
+            $images = $request->file('images');
+            $folder = "users/". $request->user()->id;
+            foreach ($images as $key => $image) {
+                $url_images = Storage::put($folder, $image, 'public');
+                Arr::set($validated, 'images.'.$key, $url_images);
+            }
+        }
+        $observation = Observation::create($validated);
+
+        return $this->success(
+            new ObservationResource($observation),
+            Response::HTTP_CREATED
+        );
     }
 
     /**
@@ -29,7 +55,10 @@ class ObservationController extends Controller
      */
     public function show(Observation $observation)
     {
-        return 'show';
+        return $this->success(
+            new ObservationResource($observation->load('user')),
+            Response::HTTP_OK
+        );
     }
 
     /**
@@ -45,6 +74,15 @@ class ObservationController extends Controller
      */
     public function destroy(Observation $observation)
     {
-        return 'destroy';
+        if($observation->user_id !== auth()->user()->id){
+            return $this->error(
+                'You can only delete your own observations',
+                Response::HTTP_UNAUTHORIZED
+            );
+        }
+        return $this->success(
+            'Deteled successfully observation with id: '. $observation->id,
+            Response::HTTP_OK
+        );
     }
 }

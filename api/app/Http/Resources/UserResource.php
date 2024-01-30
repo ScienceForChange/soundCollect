@@ -25,7 +25,7 @@ class UserResource extends JsonResource
                 'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
             ],
             'relationships' => [
-                //
+                'observations' => ObservationResource::collection($this->whenLoaded('observations')),
             ],
         ];
     }
