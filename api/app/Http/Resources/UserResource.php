@@ -16,9 +16,9 @@ class UserResource extends JsonResource
     {
         return [
             'type' => $this->getProfileTypeAttribute(),
-            'uuid' => $this->uuid,
+            'id' => $this->id,
             'attributes' => [
-                'email' => $this->when($request->user()?->uuid === $this->uuid, $this->email),
+                'email' => $this->when($request->user()?->id === $this->id, $this->email),
                 'avatar_id' => $this->avatar_id,
                 'profile' => new ProfileCitizenResource($this->profile),
                 'created_at' => $this->created_at->format('Y-m-d H:i:s'),

@@ -80,6 +80,9 @@ class ObservationController extends Controller
                 Response::HTTP_UNAUTHORIZED
             );
         }
+
+        $observation->delete();
+
         return $this->success(
             'Deteled successfully observation with id: '. $observation->id,
             Response::HTTP_OK

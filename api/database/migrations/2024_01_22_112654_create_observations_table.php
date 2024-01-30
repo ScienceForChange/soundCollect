@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('observations', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             // Screen 1
             $table->string('audio_param_1')->nullable(); //TODO: afinar
             $table->string('audio_param_2')->nullable(); //TODO: afinar
@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('sound_perception_enviroment')->nullable(); //TODO: afinar
             $table->text('comments')->nullable(); //TODO: afinar
 
-            $table->unsignedBigInteger('user_id');
+            $table->uuid('user_id');
             $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
         });

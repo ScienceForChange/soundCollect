@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use App\Traits\HasUuid;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Builder;
@@ -16,7 +16,7 @@ use Carbon\Carbon;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable, HasUuid;
+    use HasApiTokens, HasFactory, Notifiable, HasUuids;
 
     /**
      * The relationships that should always be loaded.
@@ -24,6 +24,20 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array
      */
     protected $with = ['profile'];
+
+    /**
+     * The "type" of the primary key ID.
+     *
+     * @var string
+     */
+    protected $keyType = 'uuid';
+
+    /**
+     * Indicates if the IDs are auto-incrementing.
+     *
+     * @var bool
+     */
+    public $incrementing = false;
 
     /**
      * The attributes that are mass assignable.
@@ -55,11 +69,6 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
-
-    public function getRouteKeyName(): string
-    {
-        return 'uuid';
-    }
 
     /**
      * Get the parent userable model (citizen profile, client profile, etc).
