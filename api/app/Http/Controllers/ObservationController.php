@@ -56,7 +56,7 @@ class ObservationController extends Controller
     public function show(Observation $observation)
     {
         return $this->success(
-            new ObservationResource($observation->load('user')),
+            new ObservationResource($observation),
             Response::HTTP_OK
         );
     }
@@ -84,7 +84,7 @@ class ObservationController extends Controller
         $observation->delete();
 
         return $this->success(
-            'Deteled successfully observation with id: '. $observation->id,
+            $observation->id,
             Response::HTTP_OK
         );
     }
