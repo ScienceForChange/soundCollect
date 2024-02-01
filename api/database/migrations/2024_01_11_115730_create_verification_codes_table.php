@@ -13,11 +13,12 @@ return new class extends Migration
     {
         Schema::create('verification_codes', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('user_id');
+            $table->uuid('user_id');
             $table->string('otp');
             $table->string('type');
             $table->boolean('is_used')->default(false);
             $table->timestamp('expire_at')->nullable();
+            $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
         });
     }
