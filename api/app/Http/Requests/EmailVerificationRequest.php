@@ -26,7 +26,7 @@ class EmailVerificationRequest extends FormRequest
     {
         return [
             'email' => ['required','exists:users,email','email'],
-            'otp' => ['required', new Enum(\App\Enums\OTP\OTP::class)],
+            'otp' => ['required'],
         ];
     }
 

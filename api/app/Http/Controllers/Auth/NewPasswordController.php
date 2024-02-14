@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\OTP\OTP;
 use App\Http\Controllers\Controller;
 use App\Events\PasswordReset;
 use Illuminate\Http\JsonResponse;
@@ -27,12 +28,12 @@ class NewPasswordController extends Controller
     {
         $request->validate([
             'email' => ['required', 'email'],
-            'otp' => ['required',new Enum(\App\Enums\OTP\OTP::class)],
+            'otp' => ['required'],
         ]);
 
         $user = User::where('email', $request->email)->first();
         // Take the active OTP of current user
-        $activeOtp = $user->activeOtp();
+        $activeOtp = $user->activeOtp(OTP::NEW_PASSWORD);
 
         if( !$activeOtp || $activeOtp->otp !== $request->otp ){
             return $this->fail(

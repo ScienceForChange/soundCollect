@@ -86,9 +86,9 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->profile->getMorphClass();
     }
 
-    public function activeOtp()
+    public function activeOtp(string $type)
     {
-        return $this->otp()->where('expire_at', '>', Carbon::now())->where('is_used', false)->first();
+        return $this->otp()->where('expire_at', '>', Carbon::now())->where('is_used', false)->where('type', $type)->first();
     }
 
     public function otp(): HasMany

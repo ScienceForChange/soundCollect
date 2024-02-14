@@ -28,13 +28,6 @@ class AuthOtpController extends Controller
         $user = User::where('email', $request->email)->first();
         $type = $request->type;
 
-        // if ($request->user()->email !== $user->email) {
-        //     return response()->json([
-        //         'status' => 'error',
-        //         'message' => 'You are not authorized to perform this action'
-        //     ], 403);
-        // }
-
         # Generate An OTP
         $verificationCode = $this->generateOtp($user, $type);
 
