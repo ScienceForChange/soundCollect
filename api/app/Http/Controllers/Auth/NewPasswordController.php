@@ -28,6 +28,7 @@ class NewPasswordController extends Controller
     {
         $request->validate([
             'email' => ['required', 'email'],
+            'new_password' => ['required', 'confirmed', Rules\Password::defaults()],
             'otp' => ['required'],
         ]);
 
@@ -43,8 +44,7 @@ class NewPasswordController extends Controller
             Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-
-        $newPassword = Str::random(8);
+        $newPassword = $request->new_password;
 
         $user->password = Hash::make($newPassword);
 
