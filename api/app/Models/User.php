@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\OTP\OTP;
 use App\Notifications\NewPassword;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -86,7 +87,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->profile->getMorphClass();
     }
 
-    public function activeOtp(string $type)
+    public function activeOtp(OTP $type)
     {
         return $this->otp()->where('expire_at', '>', Carbon::now())->where('is_used', false)->where('type', $type)->first();
     }
