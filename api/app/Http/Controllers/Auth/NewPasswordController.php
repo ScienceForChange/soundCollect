@@ -54,8 +54,6 @@ class NewPasswordController extends Controller
             'is_used' => true
         ]);
 
-        event(new PasswordReset($user, $newPassword));
-
         return $this->success(
             [
                 'message' => 'Password reset successfully'
