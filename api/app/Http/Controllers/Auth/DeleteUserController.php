@@ -10,6 +10,8 @@ class DeleteUserController
     {
         $user = auth()->user();
 
+        $user->otp()->delete();
+
         $user->delete();
     }
 }
