@@ -22,7 +22,10 @@ class EditUserController
             'gender'        => ['required', new Enum(\App\Enums\Citizen\Gender::class)],
         ]);
 
-        $user->update($request->validated());
+        $user->update([
+            'birth_year'    => $request->birth_year,
+            'gender'    => $request->gender
+        ]);
 
         return $this->success(
             [
