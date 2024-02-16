@@ -47,6 +47,9 @@ Route::middleware(['auth:sanctum'])
                 'data' => UserResource::make($request->user()),
             ], 200);
         });
+
+        Route::patch('/user/profile/edit', \App\Http\Controllers\Auth\EditUserController::class)->name('profile.edit');
+        Route::delete('/user/profile/delete', \App\Http\Controllers\Auth\DeleteUserController::class)->name('profile.delete');
 });
 
 Route::middleware(['auth:sanctum', 'verified'])
@@ -59,9 +62,6 @@ Route::middleware(['auth:sanctum', 'verified'])
                 ],
             ]);
         })->name('profile');
-
-        Route::patch('/user/profile/edit', \App\Http\Controllers\Auth\EditUserController::class)->name('profile.edit');
-        Route::delete('/user/profile/delete', \App\Http\Controllers\Auth\DeleteUserController::class)->name('profile.delete');
 });
 
 Route::controller(\App\Http\Controllers\Auth\AuthOtpController::class)
