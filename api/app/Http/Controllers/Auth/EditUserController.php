@@ -22,14 +22,14 @@ class EditUserController
             'gender'        => ['required', new Enum(\App\Enums\Citizen\Gender::class)],
         ]);
 
-        $user->update([
+        $user->profile()->update([
             'birth_year'    => $request->birth_year,
             'gender'    => $request->gender
         ]);
 
         return $this->success(
             [
-                'user'  => new UserResource($user),
+                'user'  => new UserResource(\App\Models\User::find($user->id)),
             ],
             Response::HTTP_OK
         );
