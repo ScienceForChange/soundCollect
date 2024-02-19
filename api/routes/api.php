@@ -19,11 +19,9 @@ use Illuminate\Http\JsonResponse;
 */
 
 Route::post('/register', \App\Http\Controllers\Auth\RegisteredUserController::class)
-                ->middleware('guest:sanctum')
                 ->name('register');
 
 Route::post('/login', \App\Http\Controllers\Auth\LoginController::class)
-                ->middleware('guest:sanctum')
                 ->name('login');
 
 Route::post('/verify-email', \App\Http\Controllers\Auth\VerifyEmailController::class)
