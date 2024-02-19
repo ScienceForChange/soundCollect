@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Traits\ApiResponses;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 class DeleteUserController
@@ -20,7 +21,7 @@ class DeleteUserController
             [
                 'message' => 'User deleted successfully',
             ],
-            200
+            Response::HTTP_OK
         );
     }
 }
