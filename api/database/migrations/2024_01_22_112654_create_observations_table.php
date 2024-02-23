@@ -14,10 +14,16 @@ return new class extends Migration
         Schema::create('observations', function (Blueprint $table) {
             $table->uuid('id')->primary();
             // Screen 1
-            $table->string('audio_param_1')->nullable(); //TODO: afinar
-            $table->string('audio_param_2')->nullable(); //TODO: afinar
-            $table->string('audio_param_3')->nullable(); //TODO: afinar
-            $table->string('audio_param_4')->nullable(); //TODO: afinar
+            $table->string('Leq')->nullable(); //TODO: afinar
+            $table->string('LAeqT')->nullable(); //TODO: afinar
+            $table->string('LAmax')->nullable(); //TODO: afinar
+            $table->string('LAmin')->nullable(); //TODO: afinar
+            $table->string('L90')->nullable(); //TODO: afinar
+            $table->string('L10')->nullable(); //TODO: afinar
+            $table->string('sharpness_S')->nullable(); //TODO: afinar
+            $table->string('loudness_N')->nullable(); //TODO: afinar
+            $table->string('roughtness_R')->nullable(); //TODO: afinar
+            $table->string('fluctuation_strength_F')->nullable(); //TODO: afinar
             // Screen 2
             $table->json('images')->nullable(); //TODO: afinar
             // Screen 3
