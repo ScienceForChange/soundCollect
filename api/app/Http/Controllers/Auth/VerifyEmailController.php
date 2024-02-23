@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\OTP\OTP;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Verified;
@@ -21,7 +22,7 @@ class VerifyEmailController extends Controller
     {
         $user = User::where('email', $request->email)->first();
         // Take the active OTP of current user
-        $activeOtp = $user->activeOtp();
+        $activeOtp = $user->activeOtp(OTP::VERIFY_EMAIL);
 
         if( !$activeOtp || $activeOtp->otp !== $request->otp ){
             return $this->fail([

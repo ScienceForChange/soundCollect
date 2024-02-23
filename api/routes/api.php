@@ -19,15 +19,13 @@ use Illuminate\Http\JsonResponse;
 */
 
 Route::post('/register', \App\Http\Controllers\Auth\RegisteredUserController::class)
-                ->middleware('guest:sanctum')
                 ->name('register');
 
 Route::post('/login', \App\Http\Controllers\Auth\LoginController::class)
-                ->middleware('guest:sanctum')
                 ->name('login');
 
 Route::post('/verify-email', \App\Http\Controllers\Auth\VerifyEmailController::class)
-                ->middleware(['guest:sanctum','throttle:6,1'])
+                ->middleware(['throttle:6,1'])
                 ->name('verification.verify');
 
 Route::post('/reset-password', \App\Http\Controllers\Auth\NewPasswordController::class)
@@ -47,6 +45,9 @@ Route::middleware(['auth:sanctum'])
                 'data' => UserResource::make($request->user()),
             ], 200);
         });
+
+        Route::patch('/user/profile/edit', \App\Http\Controllers\Auth\EditUserController::class)->name('profile.edit');
+        Route::delete('/user/profile/delete', \App\Http\Controllers\Auth\DeleteUserController::class)->name('profile.delete');
 });
 
 Route::middleware(['auth:sanctum', 'verified'])

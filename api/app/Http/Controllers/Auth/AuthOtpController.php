@@ -28,13 +28,6 @@ class AuthOtpController extends Controller
         $user = User::where('email', $request->email)->first();
         $type = $request->type;
 
-        // if ($request->user()->email !== $user->email) {
-        //     return response()->json([
-        //         'status' => 'error',
-        //         'message' => 'You are not authorized to perform this action'
-        //     ], 403);
-        // }
-
         # Generate An OTP
         $verificationCode = $this->generateOtp($user, $type);
 
@@ -74,7 +67,7 @@ class AuthOtpController extends Controller
         // Create a New OTP
         $verificationCode = VerificationCode::create([
             'user_id' => $user->id,
-            'otp' => Str::upper(Str::random(4)),
+            'otp' => str_pad(rand(0,9999),4,0,STR_PAD_LEFT),
             'type' => $type,
             'is_used' => false,
             'expire_at' => Carbon::now()->addMinutes(10)

@@ -50,6 +50,7 @@ class NewPassword extends Notification
     {
         return (new MailMessage)
             ->subject(Lang::get('New Password Notification'))
-            ->line(Lang::get('You new password is: '. $this->newPassword .'. Please, remember to change it' ));
+            ->line(Lang::get('You new password is: '. $this->newPassword ))
+            ->line(Lang::get('Please, remember to change it'));
     }
 }
