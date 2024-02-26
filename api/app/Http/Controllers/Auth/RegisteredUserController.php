@@ -27,17 +27,6 @@ class RegisteredUserController extends Controller
      */
     public function __invoke(StoreRegisteredUserRequest $request): JsonResponse
     {
-
-        // restrict users under 14 years to register
-        $birthYear = $request->birth_year;
-        $currentYear = date('Y');
-        $age = $currentYear - $birthYear;
-
-        if ($age < 14) {
-            return $this->error('You must be at least 14 years old to register.', Response::HTTP_BAD_REQUEST);
-        }
-        
-        
         $citizen = ProfileCitizen::create([
             'name' => $request->name,
             'gender' => $request->gender,
