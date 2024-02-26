@@ -18,7 +18,6 @@ class ProfileCitizenFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name,
             'gender' => fake()->randomElement(Gender::cases()),
             'birth_year' => fake()->dateTimeBetween('-100 years', '-18 years'),
             'status_sentence' => fake()->sentence(),

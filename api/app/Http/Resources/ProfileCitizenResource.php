@@ -15,7 +15,6 @@ class ProfileCitizenResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'name' => $this->name,
             'gender' => $this->gender,
             'birthYear' => $this->birth_year,
         ];

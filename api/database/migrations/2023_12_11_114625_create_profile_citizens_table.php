@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('profile_citizens', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->nullable();
             $table->string('gender')->nullable();
             $table->integer('birth_year')->nullable();
             $table->text('deleted_because')->nullable();
