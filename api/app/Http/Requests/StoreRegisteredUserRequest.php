@@ -25,7 +25,6 @@ class StoreRegisteredUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'          => ['required', 'string', 'min:3','max:100'],
             'birth_year'    => ['sometimes', 'numeric','between:1900,2100', new TeenAgeCare()],
             'email'         => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'gender'        => ['sometimes', new Enum(\App\Enums\Citizen\Gender::class)],
