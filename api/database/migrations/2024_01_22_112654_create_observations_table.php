@@ -29,7 +29,6 @@ return new class extends Migration
             $table->decimal('longitude', 8, 5)->comment('longitude varies from 180.00000 to -180.00000, 5 decimal point means 1 meter precision');
             $table->decimal('latitude', 7, 5)->comment('latitude varies from 90.00000 to -90.00000, 5 deciamal point means 1 meter precision');
             // Screen 3
-            $table->string('sound_type')->nullable();
             $table->string('quiet')->nullable();
             $table->string('cleanliness')->nullable();
             $table->string('accessibility')->nullable();
