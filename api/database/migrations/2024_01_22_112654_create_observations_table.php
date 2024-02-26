@@ -14,23 +14,28 @@ return new class extends Migration
         Schema::create('observations', function (Blueprint $table) {
             $table->uuid('id')->primary();
             // Screen 1
-            $table->string('Leq')->nullable(); //TODO: afinar
-            $table->string('LAeqT')->nullable(); //TODO: afinar
-            $table->string('LAmax')->nullable(); //TODO: afinar
-            $table->string('LAmin')->nullable(); //TODO: afinar
-            $table->string('L90')->nullable(); //TODO: afinar
-            $table->string('L10')->nullable(); //TODO: afinar
-            $table->string('sharpness_S')->nullable(); //TODO: afinar
-            $table->string('loudness_N')->nullable(); //TODO: afinar
-            $table->string('roughtness_R')->nullable(); //TODO: afinar
-            $table->string('fluctuation_strength_F')->nullable(); //TODO: afinar
+            $table->string('Leq')->nullable();
+            $table->string('LAeqT')->nullable();
+            $table->string('LAmax')->nullable();
+            $table->string('LAmin')->nullable();
+            $table->string('L90')->nullable();
+            $table->string('L10')->nullable();
+            $table->string('sharpness_S')->nullable();
+            $table->string('loudness_N')->nullable();
+            $table->string('roughtness_R')->nullable();
+            $table->string('fluctuation_strength_F')->nullable();
             // Screen 2
-            $table->json('images')->nullable(); //TODO: afinar
+            $table->json('images')->nullable();
+            $table->string('location')->nullable();
             // Screen 3
-            $table->string('sound_type')->nullable(); //TODO: afinar
-            $table->string('sound_source')->nullable(); //TODO: afinar
-            $table->string('sound_perception_enviroment')->nullable(); //TODO: afinar
-            $table->text('comments')->nullable(); //TODO: afinar
+            $table->string('sound_types')->nullable();
+            $table->string('quiet')->nullable();
+            $table->string('cleanliness')->nullable();
+            $table->string('accessibility')->nullable();
+            $table->string('safty')->nullable();
+            $table->text('influence')->nullable();
+            $table->text('landmark')->nullable();
+            $table->text('protection')->nullable();
 
             $table->uuid('user_id');
             $table->foreign('user_id')->references('id')->on('users');
