@@ -14,7 +14,7 @@ class AudioProcessingController extends Controller
     public function process(Request $request)
     {
         $request->validate([
-            'audio' => 'required|file|mimes:mp3,mp4,wav,flac',
+            'audio' => 'required|file|mimes:wav',
         ]);
 
         return $this->success(
