@@ -14,8 +14,8 @@ class TeenAgeCare implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (date('Y') - $value < 15) {
-            $fail('The minimum age requirement is 15.'); // TODO careful with translations
+        if (date('Y') - $value < 14) {
+            $fail('The minimum age requirement is 14.'); // TODO careful with translations
         }
     }
 }
