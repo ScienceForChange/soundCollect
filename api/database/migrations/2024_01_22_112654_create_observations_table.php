@@ -32,7 +32,7 @@ return new class extends Migration
             $table->string('quiet')->nullable();
             $table->string('cleanliness')->nullable();
             $table->string('accessibility')->nullable();
-            $table->string('safty')->nullable();
+            $table->string('safety')->nullable();
             $table->text('influence')->nullable();
             $table->text('landmark')->nullable();
             $table->text('protection')->nullable();
