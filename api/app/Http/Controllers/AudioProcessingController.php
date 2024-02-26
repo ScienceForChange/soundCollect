@@ -19,16 +19,16 @@ class AudioProcessingController extends Controller
 
         return $this->success(
             [
-                'Leq' => rand(40, 100),
-                'LAeqT' => [rand(40, 100), rand(40, 100), rand(40, 100), rand(40, 100), rand(40, 100)],
-                'LAmax' => rand(40, 100),
-                'LAmin' => rand(40, 100),
-                'L90' => rand(40, 100),
-                'L10' => rand(40, 100),
-                'sharpness_S' => rand(40, 100),
-                'loudness_N' => rand(40, 100),
-                'roughtness_R' => rand(40, 100),
-                'fluctuation_strength_F' => rand(40, 100),
+                'Leq' => rand(20, 140),
+                'LAeqT' => [rand(20, 140), rand(20, 140), rand(20, 140), rand(20, 140), rand(20, 140)],
+                'LAmax' => rand(20, 140),
+                'LAmin' => rand(20, 140),
+                'L90' => rand(20, 140),
+                'L10' => rand(20, 140),
+                'sharpness_S' => rand(20, 140),
+                'loudness_N' => rand(20, 140),
+                'roughtness_R' => rand(20, 140),
+                'fluctuation_strength_F' => rand(20, 140),
             ],
             HttpResponse::HTTP_OK
         );
