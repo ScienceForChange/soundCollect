@@ -53,6 +53,7 @@ class Observation extends Model
 
     protected $casts = [
         'images' => 'array',
+        'LAeqT' => 'array',
     ];
 
     public function user(): BelongsTo

@@ -54,14 +54,14 @@ class StoreObservationRequest extends FormRequest
             ],
             'latitude' => ['sometimes'],
             'longitude' => ['sometimes'],
-            'sound_types' => ['sometimes', 'array'],
-            'quiet' => ['sometimes'],
-            'cleanliness' => ['sometimes'],
-            'accessibility' => ['sometimes'],
-            'safety' => ['sometimes'],
-            'influence' => ['sometimes'],
-            'landmark' => ['sometimes'],
-            'protection' => ['sometimes'],
+            'sound_types' => ['required', 'array'],
+            'quiet' => ['required', 'string'],
+            'cleanliness' => ['required', 'string'],
+            'accessibility' => ['required', 'string'],
+            'safety' => ['required', 'string'],
+            'influence' => ['required', 'string'],
+            'landmark' => ['required', 'string'],
+            'protection' => ['required', 'string'],
             'user_id' => ['required','exists:users,id']
         ];
     }
