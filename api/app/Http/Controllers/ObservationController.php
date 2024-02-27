@@ -34,6 +34,8 @@ class ObservationController extends Controller
     {
         $validated = $request->validated();
 
+        //return $validated;
+
         if ($request->hasFile('images')) {
             $images = $request->file('images');
             $folder = "users/". $request->user()->id;
@@ -43,9 +45,10 @@ class ObservationController extends Controller
             }
         }
         $observation = Observation::create($validated);
+        $observation->types()->attach($validated['sound_types']);
 
         return $this->success(
-            new ObservationResource($observation),
+            new ObservationResource($observation->fresh()),
             Response::HTTP_CREATED
         );
     }

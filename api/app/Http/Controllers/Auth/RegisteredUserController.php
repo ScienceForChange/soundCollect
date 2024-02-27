@@ -28,7 +28,6 @@ class RegisteredUserController extends Controller
     public function __invoke(StoreRegisteredUserRequest $request): JsonResponse
     {
         $citizen = ProfileCitizen::create([
-            'name' => $request->name,
             'gender' => $request->gender,
             'birth_year' => $request->birth_year,
         ]);

@@ -35,10 +35,16 @@ class StoreObservationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'audio_param_1' => [''],
-            'audio_param_2' => [''],
-            'audio_param_3' => [''],
-            'audio_param_4' => [''],
+            'Leq' => ['sometimes'],
+            'LAeqT' => ['sometimes'],
+            'LAmax' => ['sometimes'],
+            'LAmin' => ['sometimes'],
+            'L90' => ['sometimes'],
+            'L10' => ['sometimes'],
+            'sharpness_S' => ['sometimes'],
+            'loudness_N' => ['sometimes'],
+            'roughtness_R' => ['sometimes'],
+            'fluctuation_strength_F' => ['sometimes'],
             'images.*' => [
                 File::image()
                     ->types(['jpg', 'png'])
@@ -46,10 +52,16 @@ class StoreObservationRequest extends FormRequest
                     ->max(120 * 1024)
                     ->dimensions(Rule::dimensions()->maxWidth(1000)->maxHeight(500)),
             ],
-            'sound_type' => [''],
-            'sound_source' => [''],
-            'sound_perception_enviroment' => [''],
-            'comments' => [''],
+            'latitude' => ['sometimes'],
+            'longitude' => ['sometimes'],
+            'sound_types' => ['required', 'array'],
+            'quiet' => ['required', 'string'],
+            'cleanliness' => ['required', 'string'],
+            'accessibility' => ['required', 'string'],
+            'safety' => ['required', 'string'],
+            'influence' => ['required', 'string'],
+            'landmark' => ['required', 'string'],
+            'protection' => ['required', 'string'],
             'user_id' => ['required','exists:users,id']
         ];
     }

@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\AudioProcessingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ObservationController;
+use App\Http\Controllers\SFCController;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\JsonResponse;
 
@@ -78,3 +80,7 @@ Route::name('observations.')
         Route::delete('/{observation}', [ObservationController::class, 'destroy'])->name('destroy');
     });
 });
+
+Route::get('/terms', [SFCController::class, 'terms'])->name('terms');
+
+Route::post('/audio-process', [AudioProcessingController::class, 'process'])->name('audio-process');

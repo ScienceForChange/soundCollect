@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Observation extends Model
 {
@@ -27,24 +28,44 @@ class Observation extends Model
     public $incrementing = false;
 
     protected $fillable = [
-        'audio_param_1',
-        'audio_param_2',
-        'audio_param_3',
-        'audio_param_4',
+        'Leq',
+        'LAeqT',
+        'LAmax',
+        'LAmin',
+        'L90',
+        'L10',
+        'sharpness_S',
+        'loudness_N',
+        'roughtness_R',
+        'fluctuation_strength_F',
         'images',
-        'sound_type',
-        'sound_source',
-        'sound_perception_enviroment',
-        'comments',
+        'latitude',
+        'longitude',
+        'quiet',
+        'cleanliness',
+        'accessibility',
+        'safety',
+        'influence',
+        'landmark',
+        'protection',
         'user_id',
     ];
 
     protected $casts = [
         'images' => 'array',
+        'LAeqT' => 'array',
     ];
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Sounds attatched with the observation.
+     */
+    public function types(): BelongsToMany
+    {
+        return $this->belongsToMany(Type::class);
     }
 }

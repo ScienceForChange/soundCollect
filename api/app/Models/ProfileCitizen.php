@@ -11,7 +11,6 @@ class ProfileCitizen extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name',
         'gender',
         'birth_year',
         'status_sentence',

@@ -11,12 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('profile_citizens', function (Blueprint $table) {
+        Schema::create('observation_type', function (Blueprint $table) {
             $table->id();
-            $table->string('gender')->nullable();
-            $table->integer('birth_year')->nullable();
-            $table->text('deleted_because')->nullable();
-            $table->timestamps();
+            $table->uuid('observation_id');
+
+            $table->foreign('observation_id')->references('id')->on('observations');
+
+            $table->unsignedBigInteger('type_id');
+
+            $table->foreign('type_id')->references('id')->on('types');
         });
     }
 
@@ -25,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('profile_citizens');
+        Schema::dropIfExists('observation_type');
     }
 };

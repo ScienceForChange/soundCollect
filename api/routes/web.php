@@ -13,6 +13,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// add terms and conditions page. needed for google play stre app verification
+Route::get('/terms', function () {
+    return view('terms');
+});
+
 Route::get('/', function () {
     return ['Laravel' => app()->version()];
 });
