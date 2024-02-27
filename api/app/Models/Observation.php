@@ -48,6 +48,10 @@ class Observation extends Model
         'influence',
         'landmark',
         'protection',
+        'wind_speed',
+        'humidity',
+        'temperature',
+        'pressure',
         'user_id',
     ];
 

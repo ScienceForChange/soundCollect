@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('observations', function (Blueprint $table) {
             $table->decimal('temperature', 8, 2)->comment('format used: Celsius')->nullable();
-            $table->integer('atmospheric_pressure')->comment('format used: Pascal')->nullable();
+            $table->integer('pressure')->comment('format used: Pascal')->nullable();
             $table->integer('humidity')->comment('format: g.m^3')->nullable();
             $table->decimal('wind_speed', 5, 2)->comment('format used: Meter/Sec')->nullable();
         });
