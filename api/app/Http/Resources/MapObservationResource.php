@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class TypeResource extends JsonResource
+class MapObservationResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -20,8 +20,9 @@ class TypeResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'description' => $this->description,
+            'user_id' => $this->user_id,
+            'latitude' => $this->latitude,
+            'longitude' => $this->longitude,
         ];
     }
 }

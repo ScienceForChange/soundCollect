@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ObservationController;
 use App\Http\Controllers\SFCController;
+use App\Http\Controllers\MapController;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\JsonResponse;
 
@@ -81,6 +82,11 @@ Route::name('observations.')
     });
 });
 
+Route::get('/map/observations', [MapController::class, 'index'])->name('map.index');
+
 Route::get('/terms', [SFCController::class, 'terms'])->name('terms');
 
 Route::post('/audio-process', [AudioProcessingController::class, 'process'])->name('audio-process');
+
+Route::get('/user/observations', [ObservationController::class, 'userObservations'])
+        ->middleware(['auth:sanctum'])->name('user-observations');

@@ -7,6 +7,7 @@ use App\Http\Requests\StoreObservationRequest;
 use App\Models\Observation;
 use Illuminate\Http\Request;
 use App\Http\Resources\ObservationResource;
+use App\Http\Resources\UserObservationsResource;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
@@ -23,6 +24,14 @@ class ObservationController extends Controller
     {
         return $this->success(
             ObservationResource::collection(Observation::all()),
+            Response::HTTP_OK
+        );
+    }
+
+    public function userObservations(Request $request)
+    {
+        return $this->success(
+            UserObservationsResource::collection($request->user()->observations),
             Response::HTTP_OK
         );
     }
