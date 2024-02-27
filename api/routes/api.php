@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ObservationController;
 use App\Http\Controllers\SFCController;
+use App\Http\Controllers\MapController;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\JsonResponse;
 
@@ -80,6 +81,8 @@ Route::name('observations.')
         Route::delete('/{observation}', [ObservationController::class, 'destroy'])->name('destroy');
     });
 });
+
+Route::get('/map/observations', [MapController::class, 'index'])->name('map.index');
 
 Route::get('/terms', [SFCController::class, 'terms'])->name('terms');
 
