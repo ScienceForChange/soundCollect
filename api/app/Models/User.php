@@ -97,6 +97,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(VerificationCode::class);
     }
 
+    public function observations(): HasMany
+    {
+        return $this->hasMany(Observation::class);
+    }
+
     public function sendEmailOtpNotification(VerificationCode $otp): void
     {
         $this->notify(new \App\Notifications\Otp($otp));

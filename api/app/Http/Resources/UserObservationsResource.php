@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ObservationResource extends JsonResource
+class UserObservationsResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -47,7 +47,6 @@ class ObservationResource extends JsonResource
                 'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
             ],
             'relationships' => [
-                'user' => UserResource::make($this->user),
                 'types' => TypeResource::collection($this->types),
             ],
         ];

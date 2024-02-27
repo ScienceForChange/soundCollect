@@ -14,6 +14,10 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        if (is_null($this->resource)) {
+            return [];
+        }
+
         return [
             'type' => $this->getProfileTypeAttribute(),
             'id' => $this->id,

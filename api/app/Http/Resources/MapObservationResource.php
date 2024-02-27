@@ -14,6 +14,10 @@ class MapObservationResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        if (is_null($this->resource)) {
+            return [];
+        }
+
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
