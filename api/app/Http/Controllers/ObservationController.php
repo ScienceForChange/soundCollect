@@ -12,7 +12,7 @@ use App\Traits\ApiResponses;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Arr;
-
+use Illuminate\Support\Facades\Http;
 
 class ObservationController extends Controller
 {
@@ -53,6 +53,26 @@ class ObservationController extends Controller
                 Arr::set($validated, 'images.'.$key, $url_images);
             }
         }
+
+        $response = Http::get(config('services.openweathermap.url'), [
+            'lat' => $validated['latitude'],
+            'lon' => $validated['longitude'],
+            'appid' => config('services.openweathermap.key'),
+            'units' => config('services.openweathermap.units'),
+        ]);
+
+        $data = $response->object();
+
+        // dd('wind-speed:'. $data->wind->speed,
+        //     'humidity:'.$data->main->humidity,
+        //     'temperature:'. $data->main->temp,
+        //     'pressure:'. $data->main->pressure);
+
+        $validated = Arr::add($validated, 'wind_speed', $data->wind->speed);
+        $validated = Arr::add($validated, 'humidity', $data->main->humidity);
+        $validated = Arr::add($validated, 'temperature', $data->main->temp);
+        $validated = Arr::add($validated, 'pressure', $data->main->pressure);
+
         $observation = Observation::create($validated);
         $observation->types()->attach($validated['sound_types']);
 
