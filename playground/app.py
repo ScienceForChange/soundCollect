@@ -4,12 +4,13 @@ import maad
 import sys
 from maad import spl, sound
 import numpy as np
+import json
 
 app = Flask(__name__)
 
-# @app.route("/")
-# def main():
-#     return "You're home!"
+@app.route("/")
+def main():
+    return "You're home!"
 
 # @app.route('/hello-world')
 # def hello_world():
@@ -18,7 +19,7 @@ app = Flask(__name__)
 @app.route('/audio')
 def audio():
 
-    response = []
+    response = {}
 
     # input sound file
     w, fs = maad.sound.load('./audio/Oficina-X.WAV')
@@ -46,18 +47,19 @@ def audio():
 
     # create a response
     # add Lmin
-    response.append('Lmin: ' + str(min(median_array)) + ' dB')
+    response['Lmin'] = min(median_array)
     # add Lmax
-    response.append('Lmax: ' + str(max(median_array)) + ' dB')
+    response['Lmax'] = max(median_array)
     # add Leq
-    response.append('Leq: ' + str(maad.spl.pressure2dBSPL(p_rms)) + ' dB')
+    response['Leq'] = maad.spl.pressure2dBSPL(p_rms)
     # add LAeq,T
-    response.append('LAeq,T: ' + str(median_array))
+    response['LAeqT'] = median_array
     # add L90
-    response.append('L90: ' + str(L90) + ' dB')
+    response['L90'] = L90
     # add L10
-    response.append('L10: ' + str(L10) + ' dB')
+    response['L10'] = L10
 
+    # return json.dumps(response)
     return response
 
 if __name__ == "__main__":
