@@ -45,13 +45,7 @@ class StoreObservationRequest extends FormRequest
             'loudness_N' => ['sometimes'],
             'roughtness_R' => ['sometimes'],
             'fluctuation_strength_F' => ['sometimes'],
-            'images.*' => [
-                File::image()
-                    ->types(['jpg', 'png'])
-                    ->min(128)
-                    ->max(120 * 1024)
-                    ->dimensions(Rule::dimensions()->maxWidth(1000)->maxHeight(500)),
-            ],
+            'images.*' => ['sometimes'],
             'latitude' => ['sometimes'],
             'longitude' => ['sometimes'],
             'sound_types' => ['required', 'array'],
