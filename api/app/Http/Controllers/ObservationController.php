@@ -50,7 +50,7 @@ class ObservationController extends Controller
             $folder = "users/". $request->user()->id;
             foreach ($images as $key => $image) {
                 $url_images = Storage::put($folder, $image, 'public');
-                Arr::set($validated, 'images.'.$key, $url_images);
+                Arr::set($validated, 'images.'.$key, 'https://soundcollectbucket.s3.eu-central-1.amazonaws.com/'.$url_images);
             }
         }
 
