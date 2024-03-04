@@ -33,7 +33,12 @@ class ObservationFactory extends Factory
             "loudness_N" =>  "112",
             "roughtness_R" =>  "20",
             "fluctuation_strength_F" =>  "34",
-            "images" =>  null,
+            "images" =>  [
+                "https://soundcollectbucket.s3.eu-central-1.amazonaws.com/users/9b6fd89a-6d9c-4e6d-9395-3f1026ef91eb/w4LpBsmpCieDRvkeoh7Yqynua3Ns8mtIU1F46PHy.jpg",
+                "https://soundcollectbucket.s3.eu-central-1.amazonaws.com/users/9b6fd89a-6d9c-4e6d-9395-3f1026ef91eb/XkJCWznyXd97pLZfN3ipDVTEVEspcW4Fr2aV3eGT.jpg",
+                "https://soundcollectbucket.s3.eu-central-1.amazonaws.com/users/9b6fd89a-6d9c-4e6d-9395-3f1026ef91eb/BXz7VJTiADJuCznsEzXgLkFAtQwho5UPeBMbIkhu.jpg",
+                "https://soundcollectbucket.s3.eu-central-1.amazonaws.com/users/9b6fd89a-6d9c-4e6d-9395-3f1026ef91eb/YwZ1DwvQSznZudHe2Exm6Y5CM0O1DQai41PpxTGs.png"
+            ],
             "latitude" =>  $this->faker->randomFloat(6, '41.1877', '41.5172'),
             "longitude" =>  $this->faker->randomFloat(6, '1.9155', '2.3151'),
             "quiet" =>  "0",
