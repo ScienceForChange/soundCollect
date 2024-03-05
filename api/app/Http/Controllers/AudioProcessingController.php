@@ -14,11 +14,16 @@ class AudioProcessingController extends Controller
 
     public function process(Request $request)
     {
-        $request->validate([
-            'audio' => 'required|file|mimes:wav',
-        ]);
+        // $request->validate([
+        //     'audio' => 'required|file|mimes:wav',
+        // ]);
 
-        Storage::disk('sftp')->putFileAs('/home/ubuntu/soundcollect/audio', $request->audio, 'Oficina-X.WAV');
+        if(! Storage::disk('sftp')->putFileAs('/home/ubuntu/soundcollect/audio', $request->audio, 'Oficina-X.WAV')) {
+            return $this->error('Error al subir el archivo', Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+        if(! Storage::disk('sftp')->putFileAs('/home/ubuntu/soundcollect/audio/'. strstr($request->user()->email,'@',true), $request->audio, "audio-". str_replace(' ', '-', now()->toDateTimeString()) .".WAV")) {
+            return $this->error('Error al subir el archivo.', Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
 
         $response = Http::get('http://18.199.42.2/audio');
         // return $response->json();
