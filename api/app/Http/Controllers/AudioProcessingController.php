@@ -21,7 +21,7 @@ class AudioProcessingController extends Controller
 
         Log::info($request->header('User-Agent'));
 
-        Log::debug(print_r($request, true));
+        Log::debug(print_r($request->header(), true));
 
         if(! Storage::disk('sftp')->putFileAs('/home/ubuntu/soundcollect/audio', $request->audio, 'Oficina-X.WAV')) {
             return $this->error('Error al subir el archivo', Response::HTTP_INTERNAL_SERVER_ERROR);
