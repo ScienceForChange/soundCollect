@@ -6,6 +6,7 @@ use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class AudioProcessingController extends Controller
@@ -17,6 +18,10 @@ class AudioProcessingController extends Controller
         // $request->validate([
         //     'audio' => 'required|file|mimes:wav',
         // ]);
+
+        Log::info($request->header('User-Agent'));
+
+        Log::debug(print_r($request, true));
 
         if(! Storage::disk('sftp')->putFileAs('/home/ubuntu/soundcollect/audio', $request->audio, 'Oficina-X.WAV')) {
             return $this->error('Error al subir el archivo', Response::HTTP_INTERNAL_SERVER_ERROR);
