@@ -48,10 +48,10 @@ class AudioProcessingController extends Controller
                 'LAmin' => round($data->Lmin, 2),
                 'L90' => round($data->L90, 2),
                 'L10' => round($data->L10, 2),
-                'sharpness_S' => rand(20, 140),
-                'loudness_N' => rand(20, 140),
-                'roughtness_R' => rand(20, 140),
-                'fluctuation_strength_F' => rand(20, 140),
+                'sharpness_S' => null,
+                'loudness_N' => null,
+                'roughtness_R' => null,
+                'fluctuation_strength_F' => null,
             ],
             Response::HTTP_OK
         );
