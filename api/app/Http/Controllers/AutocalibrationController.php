@@ -13,24 +13,17 @@ class AutocalibrationController extends Controller
      */
     public function update(Request $request)
     {
-        // $user = Auth::user();
+        $user = Auth::user();
 
-        // $user->profile()->update([
-        //     'autocalibration' => $request->autocalibration,
-        // ]);
-
-        // return $this->success(
-        //     [
-        //         'user'  => new UserResource(\App\Models\User::find($user->id)),
-        //     ],
-        //     Response::HTTP_OK
-        // );
+        $user->profile()->update([
+            'autocalibration' => $request->autocalibration,
+        ]);
         
-        // return response()->json([
-        //     'status' => 'success',
-        // ], 200);
+        return response()->json([
+            'user' => $user,
+        ], 200);
 
-        return $request->autocalibration;
+        // return $request->autocalibration;
 
     }
 }
