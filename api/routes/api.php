@@ -51,7 +51,7 @@ Route::middleware(['auth:sanctum'])
 
         Route::patch('/user/profile/edit', \App\Http\Controllers\Auth\EditUserController::class)->name('profile.edit');
         Route::delete('/user/profile/delete', \App\Http\Controllers\Auth\DeleteUserController::class)->name('profile.delete');
-        Route::post('/user/autocalibration', \App\Http\Controllers\AutocalibrationController::class, 'update')->name('autocalibration.update');
+        // Route::post('/user/autocalibration', \App\Http\Controllers\AutocalibrationController::class, 'update')->name('autocalibration.update');
     });
 
 Route::middleware(['auth:sanctum', 'verified'])
