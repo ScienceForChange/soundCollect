@@ -32,7 +32,11 @@ class AudioProcessingController extends Controller
             return $this->error('Error al subir el archivo.', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        $response = Http::get('http://18.199.42.2/audio');
+        // $response = Http::get('http://18.199.42.2/audio');
+
+        $autocalibration_value = $request->user()->autocalibration;
+        $response = Http::get("http://18.199.42.2/audio_new/$autocalibration_value");
+
         // return $response->json();
         $data = $response->object();
 
@@ -42,7 +46,7 @@ class AudioProcessingController extends Controller
 
         return $this->success(
             [
-                'Leq' => round($data->Leq, 2),
+                'LAeq' => round($data->Leq, 2),
                 'LAeqT' => $LAeqT,
                 'LAmax' => round($data->Lmax, 2),
                 'LAmin' => round($data->Lmin, 2),

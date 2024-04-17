@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 
+
 class AutocalibrationController extends Controller
 {
     /**
@@ -19,11 +20,7 @@ class AutocalibrationController extends Controller
             'autocalibration' => $request->autocalibration,
         ]);
         
-        return response()->json([
-            'user' => $user,
-        ], 200);
-
-        // return $request->autocalibration;
+        return response()->json(['status' => 'success'], 204);
 
     }
 }
