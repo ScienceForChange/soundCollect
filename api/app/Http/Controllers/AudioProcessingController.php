@@ -56,6 +56,8 @@ class AudioProcessingController extends Controller
                 'loudness_N' => null,
                 'roughtness_R' => null,
                 'fluctuation_strength_F' => null,
+                'response_url' => $response_url,
+                'autocalibration_value' => $autocalibration_value,
             ],
             Response::HTTP_OK
         );
