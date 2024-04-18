@@ -51,7 +51,7 @@ Route::middleware(['auth:sanctum'])
 
         Route::patch('/user/profile/edit', \App\Http\Controllers\Auth\EditUserController::class)->name('profile.edit');
         Route::delete('/user/profile/delete', \App\Http\Controllers\Auth\DeleteUserController::class)->name('profile.delete');
-        Route::post('/user/autocalibration', \App\Http\Controllers\AutocalibrationController::class)->name('autocalibration.update');
+        // Route::post('/user/autocalibration', \App\Http\Controllers\AutocalibrationController::class)->name('autocalibration.update');
     });
 
 Route::middleware(['auth:sanctum', 'verified'])
@@ -92,4 +92,6 @@ Route::post('/audio-process', [AudioProcessingController::class, 'process'])
 
 Route::get('/user/observations', [ObservationController::class, 'userObservations'])
         ->middleware(['auth:sanctum'])->name('user-observations');
+
+Route::post('/user/autocalibration', \App\Http\Controllers\AutocalibrationController::class)->middleware(['auth:sanctum'])->name('autocalibration.update');
 
