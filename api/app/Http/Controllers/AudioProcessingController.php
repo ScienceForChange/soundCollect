@@ -40,9 +40,9 @@ class AudioProcessingController extends Controller
         // return $response->json();
         $data = $response->object();
 
-        $LAeqT = collect($data->LAeqT)->map(function ($item) {
-            return round($item, 2);
-        });
+        // $LAeqT = collect($data->LAeqT)->map(function ($item) {
+        //     return round($item, 2);
+        // });
 
         return $this->success(
             [
@@ -56,7 +56,7 @@ class AudioProcessingController extends Controller
                 'loudness_N' => null,
                 'roughtness_R' => null,
                 'fluctuation_strength_F' => null,
-                'response_url' => $response_url,
+                'response_url' => $response,
                 // 'autocalibration_value' => $autocalibration_value,
             ],
             Response::HTTP_OK
