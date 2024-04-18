@@ -47,7 +47,7 @@ class AudioProcessingController extends Controller
         return $this->success(
             [
                 'Leq' => round($data->Leq, 2),
-                'LAeqT' => $LAeqT,
+                // 'LAeqT' => $LAeqT,
                 'LAmax' => round($data->Lmax, 2),
                 'LAmin' => round($data->Lmin, 2),
                 'L90' => round($data->L90, 2),
