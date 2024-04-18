@@ -35,31 +35,30 @@ class AudioProcessingController extends Controller
         // $response = Http::get('http://18.199.42.2/audio');
 
         $flask_url = "http://18.199.42.2/audio_new/". strval($request->user()->autocalibration);
-        // $response = Http::get($flask_url);
+        $response = Http::get($flask_url);
 
-        // $data = $response->object();
+        $data = $response->object();
 
-        // $LAeqT = collect($data->LAeqT)->map(function ($item) {
-        //     return round($item, 2);
-        // });
+        $LAeqT = collect($data->LAeqT)->map(function ($item) {
+            return round($item, 2);
+        });
 
         return $this->success(
             [
-                // 'Leq' => round($data->Leq, 2),
-                // 'LAeqT' => $LAeqT,
-                // 'LAmax' => round($data->Lmax, 2),
-                // 'LAmin' => round($data->Lmin, 2),
-                // 'L90' => round($data->L90, 2),
-                // 'L10' => round($data->L10, 2),
-                // 'sharpness_S' => null,
-                // 'loudness_N' => null,
-                // 'roughtness_R' => null,
-                // 'fluctuation_strength_F' => null,
-                'flask_url' => $flask_url,
+                'Leq' => round($data->Leq, 2),
+                'LAeqT' => $LAeqT,
+                'LAmax' => round($data->Lmax, 2),
+                'LAmin' => round($data->Lmin, 2),
+                'L90' => round($data->L90, 2),
+                'L10' => round($data->L10, 2),
+                'sharpness_S' => null,
+                'loudness_N' => null,
+                'roughtness_R' => null,
+                'fluctuation_strength_F' => null,
+                // 'flask_url' => $flask_url,
             ],
             Response::HTTP_OK
         );
     }
 }
 
-// trigger build
