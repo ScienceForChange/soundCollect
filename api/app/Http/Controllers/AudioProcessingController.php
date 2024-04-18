@@ -34,8 +34,8 @@ class AudioProcessingController extends Controller
 
         // $response = Http::get('http://18.199.42.2/audio');
 
-        $autocalibration_value = $request->user()->autocalibration;
-        $response = Http::get("http://18.199.42.2/audio_new/$autocalibration_value");
+        $autocalibration_value = strval($request->user()->autocalibration);
+        $response = Http::get("http://18.199.42.2/audio_new/" . $autocalibration_value);
 
         // return $response->json();
         $data = $response->object();
@@ -56,8 +56,8 @@ class AudioProcessingController extends Controller
                 'loudness_N' => null,
                 'roughtness_R' => null,
                 'fluctuation_strength_F' => null,
-                'response_url' => $response_url,
-                'autocalibration_value' => $autocalibration_value,
+                // 'response_url' => $response_url,
+                // 'autocalibration_value' => $autocalibration_value,
             ],
             Response::HTTP_OK
         );
