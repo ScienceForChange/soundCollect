@@ -12,11 +12,11 @@ class AutocalibrationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
+    public function __invoke(Request $request)
     {
         $user = Auth::user();
 
-        $user->profile()->update([
+        $user->update([
             'autocalibration' => $request->autocalibration,
         ]);
         
