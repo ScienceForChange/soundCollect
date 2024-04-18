@@ -96,4 +96,3 @@ Route::get('/user/observations', [ObservationController::class, 'userObservation
         // Route::post('/user/autocalibration', \App\Http\Controllers\AutocalibrationController::class)->middleware(['auth:sanctum'])->name('autocalibration.update');
 Route::post('/user/autocalibration', \App\Http\Controllers\AutocalibrationController::class)->middleware(['auth:sanctum'])->name('autocalibration.update');
 
-// trigger
