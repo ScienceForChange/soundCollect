@@ -49,6 +49,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'avatar_id',
+        'autocalibration',
     ];
 
     /**
