@@ -68,10 +68,10 @@ class ObservationController extends Controller
         //     'temperature:'. $data->main->temp,
         //     'pressure:'. $data->main->pressure);
 
-        $validated = Arr::add($validated, 'wind_speed', $data->wind->speed);
-        $validated = Arr::add($validated, 'humidity', $data->main->humidity);
-        $validated = Arr::add($validated, 'temperature', $data->main->temp);
-        $validated = Arr::add($validated, 'pressure', $data->main->pressure);
+        // $validated = Arr::add($validated, 'wind_speed', $data->wind->speed);
+        // $validated = Arr::add($validated, 'humidity', $data->main->humidity);
+        // $validated = Arr::add($validated, 'temperature', $data->main->temp);
+        // $validated = Arr::add($validated, 'pressure', $data->main->pressure);
 
         $observation = Observation::create($validated);
         $observation->types()->attach($validated['sound_types']);
