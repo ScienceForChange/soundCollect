@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->integer('autocalibration')->default(30);
+            $table->integer('autocalibration')->default(0);
         });
     }
 
