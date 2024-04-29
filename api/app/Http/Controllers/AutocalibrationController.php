@@ -16,6 +16,8 @@ class AutocalibrationController extends Controller
     {
         $user = Auth::user();
 
+        // $request->autocalibration = $request->autocalibration - 10;
+
         $user->update([
             'autocalibration' => $request->autocalibration,
         ]);
