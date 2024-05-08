@@ -93,6 +93,5 @@ Route::post('/audio-process', [AudioProcessingController::class, 'process'])
 Route::get('/user/observations', [ObservationController::class, 'userObservations'])
         ->middleware(['auth:sanctum'])->name('user-observations');
 
-        // Route::post('/user/autocalibration', \App\Http\Controllers\AutocalibrationController::class)->middleware(['auth:sanctum'])->name('autocalibration.update');
 Route::post('/user/autocalibration', \App\Http\Controllers\AutocalibrationController::class)->middleware(['auth:sanctum'])->name('autocalibration.update');
 
