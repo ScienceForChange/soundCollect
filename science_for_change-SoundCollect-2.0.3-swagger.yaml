@@ -1,0 +1,851 @@
+openapi: 3.0.0
+
+info:
+  description: SoundCollect API endpoint documentation
+  version: 2.0.3
+  title: SoundCollect
+  contact:
+    email: sysadmin@scienceforchange.eu
+    
+tags:
+  - name: Users
+  - name: Observations
+  
+paths:
+  /api/register:
+    post:
+      tags:
+        - Users
+        
+      summary: Register a new user
+      
+      parameters:
+        - in: query
+          name: email
+          schema:
+            type: string
+            example: test@email.com
+          required: true
+          description: Must have email format and must be unique, maximum 255 characters
+        - in: query
+          name: password
+          schema:
+            type: string
+            example: abcABC123
+          required: true
+          description: At least one lower case letter, at least one upper case letter, at least one number, minimum 8 symbols
+        - in: query
+          name: password_confirmation
+          schema:
+            type: string
+            example: abcABC123
+          required: true
+          description: Must have the same value as `password` field
+        - in: query
+          name: birth_year
+          schema:
+            type: integer
+            example: 1995
+          required: false
+          description: Only users older than 14 years are accepted, values between 1900 - 2100
+        - in: query
+          name: gender
+          schema:
+            type: string
+            enum: 
+              - male
+              - female
+              - non-binary
+              - others
+              - prefer-not-to-say
+            example: prefer-not-to-say
+
+      responses:
+        '201':
+          description: Successfully saved the data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '422':
+          description: Something failed when validating the request.
+        '500':
+          description: Internal server error.
+          
+  /api/logout:
+    post:
+      tags: 
+      - Users
+      summary: Logout user
+
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+            example: Bearer 205|HXchef661ZE4ZfMDjiVVmq5ZONhDKKG1vSej1kPad167efb7
+          required: true
+          description: Bearer token
+
+      responses:
+        '200':
+          description: Successfully logged out.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: seccess
+                  data:
+                    type: object
+        '401':
+          description: The API key was invalid or missing.
+        '500':
+          description: Internal server error.
+        
+  /api/login:
+    post:
+      tags: 
+        - Users
+      summary: Login user
+      
+      parameters:
+        - in: query
+          name: email
+          schema:
+            type: string
+            example: test@email.com
+          required: true
+          description: Must be email format, maximum 255 characters
+        - in: query
+          name: password
+          schema:
+            type: string
+            example: abcABC123
+          required: true
+          description: At least one lower case letter, at least one upper case letter, at least one number, minimum 8 symbols
+      
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '422':
+          description: Something failed when validating the request.
+        '500':
+          description: Internal server error.
+      
+  /api/otp/generate:
+    post:
+      tags: 
+        - Users
+      summary: Generate One Time Password (OTP)
+      description: Create OTP to generate user termporary actions for 10 minutes. If user requests new OTP within 10 minutes - the same OTP will be reused and will be resend by email. Users can request max 3 times within 1 minute and after that they have to wait 1 minute more to start over again. After successful use of OTP, it will be marked as 'used' and users need ro start over the whole procedure to obtain new code.
+      
+      parameters:
+        - in: query
+          name: email
+          schema:
+            type: string
+            example: test@email.com
+          required: true
+          description: User email
+        - in: query
+          name: type
+          schema:
+            type: string
+          required: false
+          description: Requested OTP type
+      
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      message: 
+                        type: string
+                        example: OTP Sent Successfully (R4LC)
+        '422':
+          description: Something failed when validating the request.
+        '428':
+          description: More than 3 requiests within 1 minute.
+        '500':
+          description: Internal server error.
+      
+  /api/verify-email:
+    post:
+      tags: 
+        - Users
+      summary: Verify user
+      description: Validate user email with the OTP code.
+      
+      parameters:
+        - in: query
+          name: email
+          schema:
+            type: string
+            example: test@email.com
+          required: true
+          description: User email
+        - in: query
+          name: otp
+          schema:
+            type: string
+          required: false
+          description: OTP that was issued.
+        
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      message: 
+                        type: string
+                        example: Email verified
+        '422':
+          description: Something failed when validating the request.
+        '409':
+          description: User already validated.
+        '500':
+          description: Internal server error.
+        
+  /api/reset-password:
+    post:
+      tags: 
+        - Users
+      summary: Reset password
+      description: Reset password with OTP
+      
+      parameters:
+        - in: query
+          name: email
+          schema:
+            type: string
+            example: test@email.com
+          required: true
+          description: User email
+        - in: query
+          name: new_password
+          schema:
+            type: string
+            example: abcABC123
+          required: true
+          description: Minimum 8 characters, at least one lower case letter, at least one upper case letter at least on number.
+        - in: query
+          name: new_password_confirmation
+          schema:
+            type: string
+            example: abcABC123
+          required: true
+          description: Must be the same as `new_password` field.
+        - in: query
+          name: otp
+          schema:
+            type: string
+          required: false
+          description: Issued OTP.
+        
+      responses:
+        '200':
+          description: Password reset success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      message: 
+                        type: string
+                        example: Password reset successfully 
+        '422':
+          description: Something failed when validating the request.
+        '500':
+          description: Internal server error.
+  
+  /api/observations:
+    get:
+      tags: 
+        - Observations
+      summary: Show all observations
+      
+      parameters: 
+        - $ref: "#/components/parameters/Main_header"
+        - $ref: "#/components/parameters/content_type_json"
+      
+      responses:
+        '200':
+          description: Successfully returned all observations.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Observation'
+
+        '500':
+          description: Internal server error.
+    post:
+      tags:
+        - Observations
+      summary: Save new observation in database
+      
+      parameters: 
+        - in: query
+          name: Leq
+          schema:
+            type: integer
+            example: 46
+        - in: query  
+          name: LAeqT
+          schema: 
+            type: array
+            items:
+              type: string
+              example: "example string"
+        - in: query
+          name: LAmax
+          schema:
+            type: integer
+            example: 27
+        - in: query
+          name: LAmin
+          schema:
+            type: integer
+            example: 54
+        - in: query
+          name: L90
+          schema:
+            type: integer
+            example: 36
+        - in: query
+          name: L10
+          schema:
+            type: integer
+            example: 75
+        - in: query
+          name: sharpness_S
+          schema:
+            type: integer
+            example: 23
+        - in: query
+          name: loudness_N
+          schema:
+            type: integer
+            example: 25
+        - in: query
+          name: roughtness_R
+          schema:
+            type: integer
+            example: 36
+        - in: query
+          name: fluctuation_strength_f
+          schema:
+            type: integer
+            example: 47
+        - in: query  
+          name: images
+          schema: 
+            type: array
+            items:
+              type: string
+              example: "image_1, image2, ..."
+        - in: query
+          name: latitude
+          schema:
+            type: string
+            example: 58.745
+          required: true
+        - in: query
+          name: longitude
+          schema:
+            type: string
+            example: 76.567
+          required: true
+        - in: query 
+          name: sound_types
+          schema: 
+            type: string
+            example: "sound_type_1, sound_type_2, ..."
+          required: true
+        - in: query
+          name: quiet
+          schema:
+            type: string
+            example: "response to the question 1"
+          required: true
+        - in: query
+          name: cleanliness
+          schema:
+            type: string
+            example: "response to the question 2"
+          required: true
+        - in: query
+          name: accessibility
+          schema:
+            type: string
+            example: "response to the question 3"
+          required: true
+        - in: query
+          name: safety
+          schema:
+            type: string
+            example: "response to the question 4"
+          required: true
+        - in: query
+          name: influence
+          schema:
+            type: string
+            example: "response to the question 5"
+          required: true
+        - in: query
+          name: landmark
+          schema:
+            type: string
+            example: "response to the question 6"
+          required: true
+        - in: query
+          name: protection
+          schema:
+            type: string
+            example: "response to the question 7"
+          required: true
+        - in: query
+          name: path
+          schema: 
+            type: string
+            example: '[{lat:1.2, lon:3.4}, {lat:5.6, lon:7.8}]'
+          required: true
+      
+      responses:
+        '500':
+          description: Internal server error.
+  
+  /api/user/observations:
+    get:
+      tags: 
+        - Observations
+      summary: Show logged in user observations
+            
+      responses:
+        '200':
+          description: Successfully returned all observations.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Observation'
+                
+  /api/map/observations:
+    get:
+      tags: 
+        - Observations
+      summary: Show simplified observations
+      
+      responses:
+        '200':
+          description: Seccessfully returned simplified observations
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: 9b6f67db-7a74-4b87-bbb8-7f4d2
+                        user_id:
+                          type: string
+                          example: 9b6f67db-7a74-4b87-bbb8-7f4d2
+                        latitude:
+                          type: string
+                          example: "90.00000"
+                        longitude:
+                          type: string
+                          example: "130.00000"
+                        path:
+                          type: string
+                          example: "[{lat:1.2, lon:3.4}, {lat:5.6, lon:7.8}]"
+        '500':
+          description: Internal server error.
+          
+  /api/observations/{uuid}:
+    get:
+      tags: 
+        - Observations
+      summary: Show single observation
+      
+      parameters: 
+        - in: path
+          name: uuid
+          schema:
+            type: string
+            example: 9b6f67db-7a74-4b87-bbb8-7f4d
+          required: true
+          description: Must have email format and must be unique, maximum 255 characters
+        
+      responses:
+        '200': 
+          description: Requested resource found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Observation'
+        
+        '404':
+          description: Requested resource was not found or provided ID is not corret.
+      
+        '500':
+          description: Internal server error.
+  
+  /api/audio-process:
+    post:
+      tags: 
+        - Observations
+      summary: Convert audio into sound parameters
+      
+      parameters: 
+        - in: query
+          name: audio
+          schema:
+            type: string
+            example: sample_audio.WAV
+          required: true
+          description: Must be .WAV extension type, max 100 MB
+        - in: header
+          name: Content-Type
+          schema:
+            type: string
+            example: multipart/form-data
+              
+      responses:
+        '200':
+          description: Audio processed successfully
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      Leq:
+                        type: string
+                        example: 67
+                      LAeqT:
+                        type: array
+                        items:
+                          type: string
+                          example: 23,34,45,68
+                      LAmax:
+                        type: string
+                        example: 86
+                      LAmin:
+                        type: string
+                        example: 46
+                      L90:
+                        type: string
+                        example: 65
+                      L10:
+                        type: string
+                        example: 45
+                      sharpness_S:
+                        type: string
+                        example: 48
+                      loudness_N:
+                        type: string
+                        example: 64
+                      roughtness_R:
+                        type: string
+                        example: 86
+                      fluctuation_strength_F:
+                        type: string
+                        example: 63
+        
+        '422':
+          description: Something failed when validating request.      
+          
+        '500':
+          description: Internal server error.
+      
+  /user/autocalibration:
+    post:
+      tags: 
+        - Observations
+      summary: Save autocalibration value
+      
+      parameters: 
+        - in: query
+          name: autocalibration
+          schema:
+            type: number
+            example: 38
+          description: Autocalibration value
+          required: true
+          
+      responses:
+        '204':
+          description: Autocalibration value saved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+      
+components:
+  schemas:
+  
+    User:
+      type: object
+      properties:
+        status: 
+          type: string
+          example: success
+        data:
+          type: object
+          properties:
+            user:
+              type: object
+              properties:
+                type:
+                  type: string
+                  example: citizen
+                uuid:
+                  type: string
+                  example: 8f959b0e-c9a6-4d7f-9cc4-60483
+                attributes:
+                  type: object
+                  properties:
+                    avatar_id:
+                      type: integer
+                      example: 1
+                    profile:
+                      type: object
+                      properties:
+                        gender:
+                          type: string
+                          example: male
+                        birthYear:
+                          type: string
+                          example: 1970-01-01
+                relationships:
+                  type: object
+            token:
+              type: string
+              example: 2LFCAKl4N6FlMTDVvtYcPI4zYtAw2
+              
+    Sound_type:
+      type: object
+      properties: 
+        id: 
+          type: string
+          example: 4
+        name: 
+          type: string
+          example: Other sounds
+        description: 
+          type: string
+          example: Siren, construction, industry, loadings of goods
+          
+    Observation:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          type: array
+          items:
+            type: object 
+            properties:
+              type: 
+                type: string
+                example: observation 
+              id:
+                type: string
+                example: 9b6f67db-7a74-4b87-bbb8
+              attributes:
+                type: object
+                properties: 
+                  Leq:
+                    type: string
+                    example: 70
+                  LAeqT:
+                    type: array
+                    items:
+                      type: string
+                      example: "52,12,13,76"
+                  LAmax:
+                    type: string
+                    example: 58
+                  LAmin:
+                    type: string
+                    example: 46
+                  L90:
+                    type: string
+                    example: 57
+                  L10:
+                    type: string
+                    example: 56
+                  sharpness_S:
+                    type: string
+                    example: abc123
+                  loudness_N:
+                    type: string
+                    example: abc123
+                  roughtness:
+                    type: string
+                    example: abc123
+                  fluctuation_strength_F:
+                    type: string
+                    example: abc123
+                  images:
+                    type: array
+                    items:
+                      type: string
+                  latitude:
+                    type: string
+                    example: 90.00000
+                  longitude:
+                    type: string
+                    example: 120.00000
+                  quiet:
+                    type: string
+                    example:
+                  cleanliness:
+                    type: string
+                    example:
+                  accessibility:
+                    type: string
+                    example:
+                  safety:
+                    type: string
+                    example:
+                  influence:
+                    type: string
+                    example:
+                  landmark:
+                    type: string
+                    example:
+                  protection:
+                    type: string
+                    example:
+                  wind_speed:
+                    type: string
+                    example: 5
+                  humidity:
+                    type: string
+                    example:
+                  temperature:
+                    type: string
+                    example: 17.51
+                  pressure:
+                    type: string
+                    example: 1007
+                  user_id:
+                    type: string
+                    example: 9b6f67d4-979d-4bb0-9cbb-961
+                  created_at:
+                    type: string
+                    example: 2024-02-27 09:57:41
+                  updated_at:
+                    type: string
+                    example: 2024-02-27 09:57:41
+              relationships:
+                type: object
+                properties: 
+                  user:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        example: citizen
+                      id:
+                        type: string
+                        example: 9b6f67d4-979d-4bb0-9cbb-9612
+                      attributes:
+                        type: object
+                        properties:
+                          avatar_id:
+                            type: string
+                            example: 1
+                          profile:
+                            type: object
+                            properties:
+                              gender:
+                                type: string
+                                example: male
+                              birthYear:
+                                type: string
+                                example: 1998
+                          created_at:
+                            type: string
+                            example: "2024-02-27 09:57:36"
+                          updated_at:
+                            type: string
+                            example: "2024-02-27 09:57:36"
+                      relationships:
+                        type: array
+                        items:
+                          type: object
+                  types:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Sound_type'
+  
+  parameters:         
+    Main_header:
+      in: header
+      name: Accept
+      schema:
+        type: string
+        example: application/json
+      required: true
+      # description: 
+    content_type_json:
+      in: header
+      name: Content-Type
+      schema:
+        type: string
+        example: application/json
+      required: true
+    content_type_multipart:      
+      in: header
+      name: Content-Type
+      schema:
+        type: string
+        example: multipart/form-data
+      required: true
