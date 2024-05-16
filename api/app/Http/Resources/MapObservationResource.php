@@ -24,6 +24,7 @@ class MapObservationResource extends JsonResource
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,
             'path' => $this->path,
+            'Leq' => $this->Leq,
         ];
     }
 }
