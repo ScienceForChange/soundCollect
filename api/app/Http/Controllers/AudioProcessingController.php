@@ -28,13 +28,15 @@ class AudioProcessingController extends Controller
         if(! Storage::disk('sftp')->putFileAs('/home/ubuntu/soundcollect/audio', $request->audio, 'Oficina-X.WAV')) {
             return $this->error('Error al subir el archivo', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-        if(! Storage::disk('sftp')->putFileAs('/home/ubuntu/soundcollect/audio/'. strstr($request->user()->email,'@',true), $request->audio, "audio-". str_replace(' ', '-', now()->toDateTimeString()) .".WAV")) {
+        if(! Storage::disk('sftp')->putFileAs('/home/ubuntu/SoundCollect_flask/audio/'. strstr($request->user()->email,'@',true), $request->audio, "audio-". str_replace(' ', '-', now()->toDateTimeString()) .".WAV")) {
             return $this->error('Error al subir el archivo.', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         // $response = Http::get('http://18.199.42.2/audio');
 
-        $flask_url = "http://18.199.42.2/audio_new/". strval($request->user()->autocalibration);
+        // $flask_url = "http://18.199.42.2/audio_new/". strval($request->user()->autocalibration);
+        $flask_url = "https://3.65.27.242/audio_new/". strval($request->user()->autocalibration);
+    
         $response = Http::get($flask_url);
 
         $data = $response->object();
