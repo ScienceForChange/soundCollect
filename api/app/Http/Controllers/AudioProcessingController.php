@@ -25,13 +25,13 @@ class AudioProcessingController extends Controller
         // Log::critical($message);
         // Log::error($message);
 
-        if(! Storage::disk('sftp')->putFileAs('/home/ubuntu/SoundCollect_flask/audio', $request->audio, 'Oficina-X.WAV')) {
+        if(! Storage::disk('sftp_to_new_flask_2cpu')->putFileAs('/home/ubuntu/SoundCollect_flask/audio', $request->audio, 'Oficina-X.WAV')) {
             return $this->error('Error when saving audio.', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
         
-        if(! Storage::disk('sftp')->putFileAs('/home/ubuntu/SoundCollect_flask/audio/'. strstr($request->user()->email,'@',true), $request->audio, "audio-". str_replace(' ', '-', now()->toDateTimeString()) .".WAV")) {
-            return $this->error('Error when trying to create user named folder to save audio.', Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        // if(! Storage::disk('sftp')->putFileAs('/home/ubuntu/SoundCollect_flask/audio/'. strstr($request->user()->email,'@',true), $request->audio, "audio-". str_replace(' ', '-', now()->toDateTimeString()) .".WAV")) {
+        //     return $this->error('Error when trying to create user named folder to save audio.', Response::HTTP_INTERNAL_SERVER_ERROR);
+        // }
 
         // $response = Http::get('http://18.199.42.2/audio');
 
