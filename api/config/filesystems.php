@@ -84,7 +84,7 @@ return [
 
         'sftp_to_new_flask_2cpu' => [
             'driver' => 'sftp',
-            'host' => 'https://3.65.27.242',
+            'host' => 'https://soundcollectflask.com',
 
             // Settings for basic authentication...
             'username' => 'ubuntu',
@@ -102,7 +102,7 @@ return [
             // 'hostFingerprint' => env('SFTP_HOST_FINGERPRINT'),
             // 'maxTries' => 4,
             // 'passphrase' => env('SFTP_PASSPHRASE'),
-            'port' => '22',
+            'port' => 22,
             // 'root' => env('SFTP_ROOT', ''),
             // 'timeout' => 30,
             // 'useAgent' => true,
