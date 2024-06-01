@@ -91,33 +91,7 @@ return [
             // 'password' => env('SFTP_PASSWORD'),
 
             // Settings for SSH key based authentication with encryption password...
-            'privateKey' => '-----BEGIN RSA PRIVATE KEY-----
-            MIIEowIBAAKCAQEAjQeAVewi/WghLT1QLIzouyo99qNbPifqdwTunr4t2X6qK/fg
-            bSxukMRzUQr6MspNsXrk029uX6tNDIXKwJLfYeQlKf6/Yy5eA6rBukhq7H8rGaLI
-            GesQbBOiExRxVD7VCZMxA4mQXV5CxMg/mmHcGUjkpyHBmvLrqi8ep8//V8bMoPiq
-            EPBKeZa0uZ4bGbHpOgmkNxDg6D+6FCQn66hoSJ0hk+3w3mxJyYjfOl2/bUGlBurp
-            bEFR8EjI0Z4xo64ZL971JBcb226KBCAB0xtvVsFPel5UxbgxPwFVpHGvuMgSjQkQ
-            Sh6kdEU6EpwatDi0vKE5PRXb96faGdz7Z/MJnQIDAQABAoIBAE5UTENs1EJLA6JM
-            26ri2KCb5a6HLLZpFSDl7GLe3jhe0cV593yroP1nH2Vz42MyWdSpnU6SJYudaT37
-            UZGEAe4s+TdJ9qLvref7f34nmrugJiAm+Vzr4kMk5HAUep2ACHM4/ZApZ7V0FUGW
-            tzzX/ZdNlTH+3bliEuKDKVOrgvcM7aU3Dftbk+Z6iUF12KNeD+vHa19DKwquLd/a
-            eeKunoz+3iATE1EX/FGEPZgse2sbL2GWO2jp8AkIcYzrDI/3YtgvR2KeXChQ4ma6
-            82Dhva2x0y24M1BAaGA3iIA8ZbUx0Jx6rrS1GjIH6tifs3TJDnKdRibmYbJ4/qtY
-            7Qbzr0ECgYEA4PLt4vK039dMyVQK71ZaqEI3fz9CKASXlPHUawX2s4n0Q2RYci9Y
-            mp7RamVZJkoN3xJn9a2C4gN6qhiI4NX3XHrZhEO7lOgqdveyDpgX/MIO5NsF4SEI
-            mYK/RsArrPQ24tzem1zN0NKlau3kzDtBD5nKhuknyW0ESjJ0zo2Nja8CgYEAoH8V
-            yHOSvjo2OqTvJbv6u6qTTcS69RtLBlC6AgJUL+Fy45g536c7plKo8lNQwQgJY6D6
-            Bv5IyHaXeEHT+6fDqHSHMCjluDC6ClSUBp1Tk8fJtBsogfzEzLs+9Wfla6HbE3Ss
-            An2pZL3akgmF0m+KIhJwkpDU6xg8Xcx1np6G3HMCgYBe3VQBH4Wz2GIjjXPHF03I
-            I5Sv7weBRN6AC7QfJjax5H3EZe7+yIS/QDbkfbUo9pX++w4oh3HoyrrSPOKMnu9g
-            ataMdtwGoho2baMDkJSdHWGWld9W3812n7L2rVg96geziJ3AO1T4ubzU6VpR3rND
-            VwIX/v+ubHEgsUKdUQjfNQKBgFe3/cTX/e0ATeFRge+CxTBKs0W+71vFdgTWnEM6
-            2J5uvudLrN3jPgPSi8od5TYLWW5dbiniUw9VWcX9XInfkF2City0jZFU+Glq/ph6
-            5lIP0NsiOMqKx1kKQgfIqChihyUkEFswKSQJa+uDTuPL2Jh0sZg5llWDooK1m9d8
-            10KnAoGBAK5MKyQcgzASKopcUVFUO4s83r6IvTlLBwq5rG0OKkhk/XCuDWLpPdfa
-            ZKukoQw3u3L9Agr1o8wqySmdKu/7JZ/xMCD++Ef4DTF/LA2IqjH+zuh2TCr3gSWJ
-            mK2pKzYLqaqasZSHE/Rlc1ob0xzKHhO13s21sz2T2NGFGNVO+ytZ
-            -----END RSA PRIVATE KEY-----',
+            'privateKey' => env('SFTP_PRIVATE_KEY'),
             // 'passphrase' => env('SFTP_PASSPHRASE'),
 
             // Settings for file / directory permissions...

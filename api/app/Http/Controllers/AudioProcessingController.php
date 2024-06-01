@@ -24,22 +24,37 @@ class AudioProcessingController extends Controller
         // Log::alert($message);
         // Log::critical($message);
         // Log::error($message);
+        
 
-        if(! Storage::disk('sftp_to_new_flask_2cpu')->putFileAs('/home/ubuntu/SoundCollect_flask/audio', $request->audio, 'Oficina-X.WAV')) {
-            return $this->error('Error when saving audio.', Response::HTTP_INTERNAL_SERVER_ERROR);
+        // write a audio file through SMTP connection for later processing into paramteres
+        try {
+            Storage::disk('sftp_to_new_flask_2cpu')->putFileAs('/home/ubuntu/SoundCollect_flask/audio', $request->audio, 'Oficina-X.WAV');
+        } catch (\Exception $e) {
+            // If any error occurred while trying to write the file, return an error message
+            return $this->error('Error when saving audio: ' . $e, Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+
+        // Create user named folder (with email name before @) and save audio into it
+        try {
+            Storage::disk('sftp_to_new_flask_2cpu')->putFileAs('/home/ubuntu/SoundCollect_flask/audio/'. strstr($request->user()->email,'@',true), $request->audio, "audio-". str_replace(' ', '-', now()->toDateTimeString()) .".WAV");
+        } catch (\Exception $e) {
+            return $this->error('Error when trying to create user named folder to save audio.', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
         
-        // if(! Storage::disk('sftp')->putFileAs('/home/ubuntu/SoundCollect_flask/audio/'. strstr($request->user()->email,'@',true), $request->audio, "audio-". str_replace(' ', '-', now()->toDateTimeString()) .".WAV")) {
-        //     return $this->error('Error when trying to create user named folder to save audio.', Response::HTTP_INTERNAL_SERVER_ERROR);
-        // }
 
-        // $response = Http::get('http://18.199.42.2/audio');
+        // define url to call audio to params function on flask server
+        $flask_url = "https://soundcollectflask.com/audio_new/". strval($request->user()->autocalibration);
 
-        // $flask_url = "http://18.199.42.2/audio_new/". strval($request->user()->autocalibration);
-        $flask_url = "https://3.65.27.242/audio_new/". strval($request->user()->autocalibration);
-    
-        $response = Http::get($flask_url);
 
+        // call audio to params funcion on flask server
+        try {
+            $response = Http::get($flask_url);
+        } catch (\Exception $e) {
+            return $this->error('Error when calling flask audio to parameters function on flask sever: ' . $e, Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        
         $data = $response->object();
 
         $LAeqT = collect($data->LAeqT)->map(function ($item) {
