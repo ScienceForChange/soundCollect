@@ -63,18 +63,15 @@ class ObservationController extends Controller
 
         $data = $response->object();
 
-        // dd('wind-speed:'. $data->wind->speed,
-        //     'humidity:'.$data->main->humidity,
-        //     'temperature:'. $data->main->temp,
-        //     'pressure:'. $data->main->pressure);
-
-        // $validated = Arr::add($validated, 'wind_speed', $data->wind->speed);
-        // $validated = Arr::add($validated, 'humidity', $data->main->humidity);
-        // $validated = Arr::add($validated, 'temperature', $data->main->temp);
-        // $validated = Arr::add($validated, 'pressure', $data->main->pressure);
+        $validated = Arr::add($validated, 'wind_speed', $data->wind->speed);
+        $validated = Arr::add($validated, 'humidity', $data->main->humidity);
+        $validated = Arr::add($validated, 'temperature', $data->main->temp);
+        $validated = Arr::add($validated, 'pressure', $data->main->pressure);
 
         $observation = Observation::create($validated);
-        $observation->types()->attach($validated['sound_types']);
+        if (array_key_exists('sound_types', $validated)) { // En realidad no hace falta esta comprobación porque "sound_types" es requerido pero por si acaso.
+            $observation->types()->attach($validated['sound_types']);
+        }
 
         return $this->success(
             new ObservationResource($observation->fresh()),

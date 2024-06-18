@@ -29,7 +29,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./.env:/usr/src/.env
-      - /usr/src/flask_key_pair.pem:/usr/src/flask_key_pair.pem
+      - ./flask_key/flask_2cpu_private_key.pem:/usr/src/flask_key/flask_key_pair.pem
       - type: volume
         source: storage
         target: /usr/src/storage
