@@ -53,6 +53,7 @@ class Observation extends Model
         'temperature',
         'pressure',
         'user_id',
+        'path'
     ];
 
     protected $casts = [

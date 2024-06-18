@@ -16,9 +16,11 @@ class AutocalibrationController extends Controller
     {
         $user = Auth::user();
 
-        // $user->update([
-        //     'autocalibration' => $request->autocalibration,
-        // ]);
+        // $request->autocalibration = $request->autocalibration - 10;
+
+        $user->update([
+            'autocalibration' => $request->autocalibration,
+        ]);
         
         return response()->json(['status' => 'success'], 204);
 

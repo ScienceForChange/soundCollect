@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->integer('autocalibration')->default(0);
+            $table->integer('is_expert')->default(0)->comment('0: No, 1: Yes');
         });
     }
 
@@ -22,7 +22,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('autocalibration');
+            $table->dropColumn('is_expert');
         });
     }
 };
+
+// trigger ci/cd
