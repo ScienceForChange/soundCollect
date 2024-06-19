@@ -121,17 +121,29 @@ class ObservationController extends Controller
 
     public function polygonShow(Request $request, PointInPolygonService $pointInPolygonService)
     {
+        // We validate that the request has the required fields
         $request->validate([
             "concern" => ['required', new Enum(PolygonQuery::class)],
             'polygon' => ['required', 'array'],
-            'polygon.*' => ['required', 'string']
+            'polygon.*' => ['required', 'string'],
+            'interval'  => ['required', 'array'],
+            'interval.*' => ['required', 'date_format:H:i:s'],
+            'interval.end' => ['after_or_equal:interval.start'],
         ]);
 
-        $observations = Observation::get();
+        $start = $request->interval['start'];
+        $end = $request->interval['end'];
 
-        $result = $observations->filter(fn($observation) =>
-            $pointInPolygonService->pointInPolygon($observation->longitude ." ". $observation->latitude, $request->polygon) == $request->concern
+        // We use whereTime to filter the observations that are within the TIME interval (we do not care about the date)
+        $observations = Observation::whereTime('created_at', '>=', $start)->whereTime('created_at', '<=', $end)->get();
+
+        $observationsFiltered = $observations->filter(fn($observation) =>
+            // We use the pointInPolygon method to filter the observations that are within the polygon, passing string, array args and comparing the result with the concern requested
+            $pointInPolygonService->pointInPolygon(
+                                        sprintf("%s %s", $observation->longitude, $observation->latitude),
+                                        $request->polygon) === $request->concern
         );
-        return ObservationResource::collection($result);
+
+        return ObservationResource::collection($observationsFiltered);
     }
 }
