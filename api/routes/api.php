@@ -77,6 +77,7 @@ Route::name('observations.')
     ->group(function () {
     Route::get('/', [ObservationController::class, 'index'])->name('index');
     Route::get('/{observation}', [ObservationController::class, 'show'])->name('show');
+    Route::post('/in-polygon', [ObservationController::class, 'polygonShow'])->name('map.show');
     Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::post('/', [ObservationController::class, 'store'])->name('store');
         Route::delete('/{observation}', [ObservationController::class, 'destroy'])->name('destroy');
@@ -94,5 +95,3 @@ Route::get('/user/observations', [ObservationController::class, 'userObservation
         ->middleware(['auth:sanctum'])->name('user-observations');
 
 Route::post('/user/autocalibration', \App\Http\Controllers\AutocalibrationController::class)->middleware(['auth:sanctum'])->name('autocalibration.update');
-
-// trigger ci/cd pipeline

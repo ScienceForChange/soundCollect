@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\DeleteObservationRequest;
 use App\Http\Requests\StoreObservationRequest;
 use App\Models\Observation;
 use Illuminate\Http\Request;
@@ -12,7 +11,9 @@ use App\Traits\ApiResponses;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Http;
+use App\Services\PointInPolygonService;
+use App\Enums\Observation\PolygonQuery;
+use Illuminate\Validation\Rules\Enum;
 
 class ObservationController extends Controller
 {
@@ -54,19 +55,19 @@ class ObservationController extends Controller
             }
         }
 
-        $response = Http::get(config('services.openweathermap.url'), [
-            'lat' => $validated['latitude'],
-            'lon' => $validated['longitude'],
-            'appid' => config('services.openweathermap.key'),
-            'units' => config('services.openweathermap.units'),
-        ]);
+        // $response = Http::get(config('services.openweathermap.url'), [
+        //     'lat' => $validated['latitude'],
+        //     'lon' => $validated['longitude'],
+        //     'appid' => config('services.openweathermap.key'),
+        //     'units' => config('services.openweathermap.units'),
+        // ]);
 
-        $data = $response->object();
+        // $data = $response->object();
 
-        $validated = Arr::add($validated, 'wind_speed', $data->wind->speed);
-        $validated = Arr::add($validated, 'humidity', $data->main->humidity);
-        $validated = Arr::add($validated, 'temperature', $data->main->temp);
-        $validated = Arr::add($validated, 'pressure', $data->main->pressure);
+        // $validated = Arr::add($validated, 'wind_speed', $data->wind->speed);
+        // $validated = Arr::add($validated, 'humidity', $data->main->humidity);
+        // $validated = Arr::add($validated, 'temperature', $data->main->temp);
+        // $validated = Arr::add($validated, 'pressure', $data->main->pressure);
 
         $observation = Observation::create($validated);
         if (array_key_exists('sound_types', $validated)) { // En realidad no hace falta esta comprobación porque "sound_types" es requerido pero por si acaso.
@@ -116,5 +117,21 @@ class ObservationController extends Controller
             $observation->id,
             Response::HTTP_OK
         );
+    }
+
+    public function polygonShow(Request $request, PointInPolygonService $pointInPolygonService)
+    {
+        $request->validate([
+            "concern" => ['required', new Enum(PolygonQuery::class)],
+            'polygon' => ['required', 'array'],
+            'polygon.*' => ['required', 'string']
+        ]);
+
+        $observations = Observation::get();
+
+        $result = $observations->filter(fn($observation) =>
+            $pointInPolygonService->pointInPolygon($observation->longitude ." ". $observation->latitude, $request->polygon) == $request->concern
+        );
+        return ObservationResource::collection($result);
     }
 }
