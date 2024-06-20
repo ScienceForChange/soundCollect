@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Observation extends Model
 {
@@ -72,5 +73,11 @@ class Observation extends Model
     public function types(): BelongsToMany
     {
         return $this->belongsToMany(Type::class);
+    }
+
+    //add polyline observation relationship
+    public function polylineObservations(): HasMany
+    {
+        return $this->HasMany(Polylines::class);
     }
 }
