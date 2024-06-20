@@ -6,7 +6,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class PolylineResource extends JsonResource
 {
-    public function toArray($request)
+    public function toArray()
     {
         return [
             // Define the attributes you want to include in the resource
