@@ -77,13 +77,14 @@ Route::controller(\App\Http\Controllers\Auth\AuthOtpController::class)
 Route::name('observations.')
     ->prefix('observations')
     ->group(function () {
-        Route::get('/', [ObservationController::class, 'index'])->name('index');
-        Route::get('/{observation}', [ObservationController::class, 'show'])->name('show');
-        Route::group(['middleware' => ['auth:sanctum']], function () {
-            Route::post('/', [ObservationController::class, 'store'])->name('store');
-            Route::delete('/{observation}', [ObservationController::class, 'destroy'])->name('destroy');
-        });
+    Route::get('/', [ObservationController::class, 'index'])->name('index');
+    Route::get('/{observation}', [ObservationController::class, 'show'])->name('show');
+    Route::post('/in-polygon', [ObservationController::class, 'polygonShow'])->name('map.show');
+    Route::group(['middleware' => ['auth:sanctum']], function () {
+        Route::post('/', [ObservationController::class, 'store'])->name('store');
+        Route::delete('/{observation}', [ObservationController::class, 'destroy'])->name('destroy');
     });
+});
 
 Route::get('/map/observations', [MapController::class, 'index'])->name('map.index');
 
