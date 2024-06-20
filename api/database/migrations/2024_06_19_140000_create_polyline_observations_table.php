@@ -25,12 +25,12 @@ return new class extends Migration
             $table->decimal('end_latitude', 7, 5)->comment('latitude varies from 90.00000 to -90.00000, 5 deciamal point means 1 meter precision');
             $table->decimal('end_longitude', 8, 5)->comment('longitude varies from 180.00000 to -180.00000, 5 decimal point means 1 meter precision');
 
-            $table->integer('L90');
-            $table->integer('L10');
-            $table->integer('LAmax');
-            $table->integer('LAmin');
-            $table->integer('LAeq');
-            $table->json('LAeqT');
+            $table->integer('L90')->nullable();
+            $table->integer('L10')->nullable();
+            $table->integer('LAmax')->nullable();
+            $table->integer('LAmin')->nullable();
+            $table->integer('LAeq')->nullable();
+            $table->json('LAeqT')->nullable();
         });
     }
 
