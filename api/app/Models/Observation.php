@@ -76,8 +76,8 @@ class Observation extends Model
     }
 
     //add polyline observation relationship
-    public function polylineObservations(): HasMany
+    public function polylines(): HasMany
     {
-        return $this->HasMany(Polylines::class);
+        return $this->HasMany(Polyline::class);
     }
 }

@@ -10,9 +10,7 @@ class Polylines extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-
-    ];
+    protected $fillable = [];
     /**
      * The observations attatched with the type.
      */
