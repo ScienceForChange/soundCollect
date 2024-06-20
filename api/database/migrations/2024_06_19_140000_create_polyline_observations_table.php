@@ -18,7 +18,7 @@ return new class extends Migration
             $table->uuid('observation_id');
             $table->foreign('observation_id')->references('id')->on('observations');
 
-            $table->integet('position')->comment('position of the polyline observation in the route');
+            $table->integer('position')->comment('position of the polyline observation in the route');
 
             $table->decimal('start_latitude', 7, 5)->comment('latitude varies from 90.00000 to -90.00000, 5 deciamal point means 1 meter precision');
             $table->decimal('start_longitude', 8, 5)->comment('longitude varies from 180.00000 to -180.00000, 5 decimal point means 1 meter precision');
