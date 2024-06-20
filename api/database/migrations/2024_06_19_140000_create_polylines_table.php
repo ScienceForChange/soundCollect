@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('polyline_observations', function (Blueprint $table) {
+        Schema::create('polylines', function (Blueprint $table) {
 
             $table->id();
 
