@@ -9,6 +9,8 @@ use App\Http\Controllers\SFCController;
 use App\Http\Controllers\MapController;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\PolylineObservationController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -22,26 +24,26 @@ use Illuminate\Http\JsonResponse;
 */
 
 Route::post('/register', \App\Http\Controllers\Auth\RegisteredUserController::class)
-                ->name('register');
+    ->name('register');
 
 Route::post('/login', \App\Http\Controllers\Auth\LoginController::class)
-                ->name('login');
+    ->name('login');
 
 Route::post('/verify-email', \App\Http\Controllers\Auth\VerifyEmailController::class)
-                ->middleware(['throttle:6,1'])
-                ->name('verification.verify');
+    ->middleware(['throttle:6,1'])
+    ->name('verification.verify');
 
 Route::post('/reset-password', \App\Http\Controllers\Auth\NewPasswordController::class)
-                ->middleware(['guest:sanctum'])
-                ->name('password.store');
+    ->middleware(['guest:sanctum'])
+    ->name('password.store');
 
 Route::post('/logout', \App\Http\Controllers\Auth\LogoutController::class)
-                ->middleware(['auth:sanctum'])
-                ->name('logout');
+    ->middleware(['auth:sanctum'])
+    ->name('logout');
 
 //TODO: crear un controlador de usuarios loggeados
 Route::middleware(['auth:sanctum'])
-   ->group(function() {
+    ->group(function () {
         Route::get('/user', function (Request $request) {
             return new JsonResponse([
                 'status' => 'success',
@@ -55,7 +57,7 @@ Route::middleware(['auth:sanctum'])
     });
 
 Route::middleware(['auth:sanctum', 'verified'])
-   ->group(function() {
+    ->group(function () {
         Route::get('/user/profile', function () {
             return response()->json([
                 'status' => 'success',
@@ -64,35 +66,35 @@ Route::middleware(['auth:sanctum', 'verified'])
                 ],
             ]);
         })->name('profile');
-});
+    });
 
 Route::controller(\App\Http\Controllers\Auth\AuthOtpController::class)
-        ->middleware(['guest', 'throttle:3,1'])
-        ->group(function(){
-    Route::post('/otp/generate', 'generate')->name('otp.generate');
-});
+    ->middleware(['guest', 'throttle:3,1'])
+    ->group(function () {
+        Route::post('/otp/generate', 'generate')->name('otp.generate');
+    });
 
 Route::name('observations.')
     ->prefix('observations')
     ->group(function () {
-    Route::get('/', [ObservationController::class, 'index'])->name('index');
-    Route::get('/{observation}', [ObservationController::class, 'show'])->name('show');
-    Route::group(['middleware' => ['auth:sanctum']], function () {
-        Route::post('/', [ObservationController::class, 'store'])->name('store');
-        Route::delete('/{observation}', [ObservationController::class, 'destroy'])->name('destroy');
+        Route::get('/', [ObservationController::class, 'index'])->name('index');
+        Route::get('/{observation}', [ObservationController::class, 'show'])->name('show');
+        Route::group(['middleware' => ['auth:sanctum']], function () {
+            Route::post('/', [ObservationController::class, 'store'])->name('store');
+            Route::delete('/{observation}', [ObservationController::class, 'destroy'])->name('destroy');
+        });
     });
-});
 
 Route::get('/map/observations', [MapController::class, 'index'])->name('map.index');
 
 Route::get('/terms', [SFCController::class, 'terms'])->name('terms');
 
 Route::post('/audio-process', [AudioProcessingController::class, 'process'])
-        ->middleware(['auth:sanctum'])->name('audio-process');
+    ->middleware(['auth:sanctum'])->name('audio-process');
 
 Route::get('/user/observations', [ObservationController::class, 'userObservations'])
-        ->middleware(['auth:sanctum'])->name('user-observations');
+    ->middleware(['auth:sanctum'])->name('user-observations');
 
 Route::post('/user/autocalibration', \App\Http\Controllers\AutocalibrationController::class)->middleware(['auth:sanctum'])->name('autocalibration.update');
 
-// trigger ci/cd pipeline
+Route::get('/polyline_observations', [PolylineObservationController::class, 'index'])->name('polyline_observations');
