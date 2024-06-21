@@ -54,7 +54,7 @@ class ObservationResource extends JsonResource
             'relationships' => [
                 'user' => UserResource::make($this->user),
                 'types' => TypeResource::collection($this->types),
-                // 'polylines' => PolylineResource::collection($this->polylines),
+                'segments' => SegmentResource::collection($this->segments),
             ],
         ];
     }
