@@ -33,7 +33,7 @@ services:
       context: .
       dockerfile: ./api/Dockerfile-dev
       target: api
-    command: sh -c "./wait-for-it.sh mysql:3306 -t 30 && ./wait-for-it.sh redis:6379 -t 30 && php-fpm"
+    command: sh -c "./wait-for-it.sh mysql:3306 -t 30 && ./wait-for-it.sh redis:6379 -t 30 && php-fpm && timedatectl set-timezone Europe/Berlin"
     restart: unless-stopped
     volumes:
       - ./api/app:/usr/src/app
