@@ -156,7 +156,7 @@ jobs:
           ssh -tt -o StrictHostKeyChecking=no -i ./id_rsa ${{ secrets.SSH_CONNECTION_PROD }} "chmod +x /home/ubuntu/deploy.sh"
           ssh -tt -o StrictHostKeyChecking=no -i ./id_rsa ${{ secrets.SSH_CONNECTION_PROD }} "
             sed -i '/IMAGE_TAG/c\IMAGE_TAG=${{ github.sha }}' /usr/src/.env
-            sed -i '/COMPOSE_PROJECT_NAME/c\COMPOSE_PROJECT_NAME=soundCollect' /usr/src/.env
+            sed -i '/COMPOSE_PROJECT_NAME/c\COMPOSE_PROJECT_NAME=soundcollect' /usr/src/.env
 
             sed -i '/DOCKERHUB_USERNAME/c\DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}' /usr/src/.env
             sed -i '/DOCKERHUB_PASSWORD/c\DOCKERHUB_PASSWORD=${{ secrets.DOCKERHUB_PASSWORD }}' /usr/src/.env
