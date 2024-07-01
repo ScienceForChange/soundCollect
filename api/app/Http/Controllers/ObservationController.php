@@ -14,6 +14,8 @@ use Illuminate\Support\Arr;
 use App\Services\PointInPolygonService;
 use App\Enums\Observation\PolygonQuery;
 use Illuminate\Validation\Rules\Enum;
+use Illuminate\Support\Facades\Http;
+use Throwable;
 
 class ObservationController extends Controller
 {
@@ -44,8 +46,6 @@ class ObservationController extends Controller
     {
         $validated = $request->validated();
 
-        //return $validated;
-
         if ($request->hasFile('images')) {
             $images = $request->file('images');
             $folder = "users/". $request->user()->id;
@@ -55,21 +55,35 @@ class ObservationController extends Controller
             }
         }
 
-        // $response = Http::get(config('services.openweathermap.url'), [
-        //     'lat' => $validated['latitude'],
-        //     'lon' => $validated['longitude'],
-        //     'appid' => config('services.openweathermap.key'),
-        //     'units' => config('services.openweathermap.units'),
-        // ]);
+        // We wrap the call to the OpenWeather API in a try/catch block to handle and have error logs
+        // because Laravel's HTTP client wrapper does not throw exceptions on client or server errors (400 and 500 level responses from servers)
+        try {
+        $response = Http::openWeather()->get('/', 
+            [
+                'lat' => 41.98867, //$validated['latitude'],
+                'lon' => 2.81922, //$validated['longitude'],
+            ]
+        );
 
-        // $data = $response->object();
+        // Immediately execute the given callback if there was a client or server error
+        $response->onError($response->throw());
 
-        // $validated = Arr::add($validated, 'wind_speed', $data->wind->speed);
-        // $validated = Arr::add($validated, 'humidity', $data->main->humidity);
-        // $validated = Arr::add($validated, 'temperature', $data->main->temp);
-        // $validated = Arr::add($validated, 'pressure', $data->main->pressure);
+        $data = $response->object();
+
+        Arr::set($validated, 'wind_speed', $data->wind->speed);
+        Arr::set($validated, 'humidity', $data->main->humidity);
+        Arr::set($validated, 'temperature', $data->main->temp);
+        Arr::set($validated, 'pressure', $data->main->pressure);
+
+        } catch (\Illuminate\Http\Client\RequestException $err) {
+            // to report an exception but continue handling the current request
+            report($err);
+
+            return false;
+        }
 
         $observation = Observation::create($validated);
+
         if (array_key_exists('sound_types', $validated)) { // En realidad no hace falta esta comprobación porque "sound_types" es requerido pero por si acaso.
             $observation->types()->attach($validated['sound_types']);
         }
