@@ -4,7 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Http;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,5 +27,12 @@ class AppServiceProvider extends ServiceProvider
             'citizen' => 'App\Models\ProfileCitizen',
             'client' => 'App\Models\ProfileClient',
         ]);
+
+        Http::macro('openWeather', function () {
+            return Http::withQueryParameters([
+                'appi' => config('services.openweathermap.key'),
+                'units' => config('services.openweathermap.units'),
+            ])->baseUrl(config('services.openweathermap.url'));
+        });
     }
 }
