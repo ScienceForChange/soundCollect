@@ -69,10 +69,10 @@ class AudioProcessingController extends Controller
                     'LAmin' => round($data->Lmin, 2),
                     'L90' => round($data->L90, 2),
                     'L10' => round($data->L10, 2),
-                    'sharpness_S' => null,
-                    'loudness_N' => null,
-                    'roughtness_R' => null,
-                    'fluctuation_strength_F' => null,
+                    'sharpness_S' => round($data->sharpness, 2),
+                    'loudness_N' => round($data->loudness,2),
+                    'roughtness_R' => null, // Todavía no se calcula
+                    'fluctuation_strength_F' => round($data->fluctuation, 5), // Tiene muchos decimales, aún esta por ver cómo se guarda
                     // 'flask_url' => $flask_url,
                 ],
                 Response::HTTP_OK
