@@ -60,8 +60,8 @@ class ObservationController extends Controller
         try {
         $response = Http::openWeather()->get('/', 
             [
-                'lat' => 41.98867, //$validated['latitude'],
-                'lon' => 2.81922, //$validated['longitude'],
+                'lat' => $validated['latitude'],
+                'lon' => $validated['longitude'],
             ]
         );
 
